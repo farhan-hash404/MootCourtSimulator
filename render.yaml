@@ -1,0 +1,83 @@
+# Render blueprint — the two backend services for CourtSimulator.
+#
+# The web app is NOT here: it deploys to Vercel (see vercel.json), which serves
+# the static SPA and rewrites /api/* to the Express service below. That keeps
+# the browser same-origin against /api, which is the whole reason the session
+# cookie (httpOnly, sameSite=lax, host-only) works without CORS.
+#
+# Both services build from the Dockerfiles the docker-compose stack already
+# uses, with build context at the repo root — the api-server image needs
+# lib/, scripts/ and data/, and the ai-service image needs the exact
+# <root>/artifacts/ai-service layout its config.py resolves against.
+#
+# The database is external (Supabase). It is already migrated, seeded and the
+# statute corpus embedded, so there is no db-init step here — see
+# docs/deployment.md for the one-time commands if you ever point these at a
+# fresh Postgres.
+#
+# First deploy: open this repo in Render → "New +" → "Blueprint", then fill in
+# the sync:false secrets (DATABASE_URL, OPENAI_API_KEY, AUTH_SECRET) in the
+# dashboard. AI_SERVICE_URL is wired automatically from the AI service's host.
+
+services:
+  # Python reasoning service: retrieval, grounding, memory, the LangGraph
+  # courtroom. Only the Express service talks to it; the browser never does.
+  - type: web
+    name: courtsim-ai
+    runtime: docker
+    plan: free            # 512 MB. RERANKER_BACKEND=llm keeps torch out, so it
+                          # fits; if a courtroom turn OOMs, move to `starter`.
+    region: singapore     # closest Render region to the Supabase Tokyo (ap-northeast-1) instance
+    dockerfilePath: ./artifacts/ai-service/Dockerfile
+    dockerContext: .
+    # The Dockerfile CMD hardcodes port 8000; Render assigns its own $PORT and
+    # health-checks it, so bind $PORT instead. sh -c so the shell expands it.
+    dockerCommand: sh -c "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /healthz
+    envVars:
+      - key: DATABASE_URL
+        sync: false       # the Supabase pooler URL; set in the dashboard
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: RERANKER_BACKEND
+        value: llm
+      - key: PYTHONUNBUFFERED
+        value: "1"
+
+  # Express API: owns the HTTP contract, sessions, auth and voice transport.
+  - type: web
+    name: courtsim-api
+    runtime: docker
+    plan: free            # spins down after 15 min idle on free — the first
+                          # request cold-starts. Warm it before a live demo.
+    region: singapore
+    dockerfilePath: ./artifacts/api-server/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/healthz
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      # No default by design: getSecret() throws only when a token is signed, so
+      # a missing secret boots fine and fails at sign-in. Set it here so it can't.
+      # Generate: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+      - key: AUTH_SECRET
+        sync: false
+      - key: NODE_ENV
+        value: production  # makes the session cookie Secure (Vercel serves HTTPS)
+      # Vercel edge + Render's load balancer are the two proxies in front of
+      # Express, so trust two hops for the per-IP login rate limits to see the
+      # real client. Raise/lower if the limits misbehave; see app.ts.
+      - key: TRUST_PROXY
+        value: "2"
+      # The AI service's public host (courtsim-ai.onrender.com). ai-service.ts
+      # fills in the https:// scheme. A courtroom turn can also cold-start the
+      # AI container, so allow more than the 60s default before giving up.
+      - key: AI_SERVICE_URL
+        fromService:
+          type: web
+          name: courtsim-ai
+          property: host
+      - key: AI_SERVICE_TIMEOUT_MS
+        value: "120000"

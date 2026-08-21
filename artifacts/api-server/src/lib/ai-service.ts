@@ -11,8 +11,28 @@
  * statute text out of quotations) has exactly one implementation.
  */
 
-const BASE_URL =
-  process.env.AI_SERVICE_URL?.replace(/\/$/, "") || "http://localhost:8000";
+/**
+ * Normalises whatever the platform hands us into a fetchable origin.
+ *
+ * A full URL passes through untouched. A scheme-less `host` or `host:port` —
+ * which is what a service-reference on a managed host emits (e.g. Render's
+ * `fromService` yields `courtsim-ai.onrender.com`, not an https:// URL) — would
+ * make `fetch("host:port/path")` read `host:` as the scheme and fail. So a
+ * missing scheme is filled in: TLS for a public hostname (it has a dot), plain
+ * http for an internal service name or localhost, which is the split every
+ * managed platform actually uses.
+ */
+function normaliseBaseUrl(raw: string): string {
+  const trimmed = raw.trim().replace(/\/$/, "");
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  const host = trimmed.split(":")[0];
+  const scheme = host.includes(".") ? "https" : "http";
+  return `${scheme}://${trimmed}`;
+}
+
+const BASE_URL = process.env.AI_SERVICE_URL
+  ? normaliseBaseUrl(process.env.AI_SERVICE_URL)
+  : "http://localhost:8000";
 
 /**
  * Generous by design: a reranked retrieval plus a model call can legitimately
