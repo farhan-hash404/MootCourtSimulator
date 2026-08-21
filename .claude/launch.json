@@ -1,0 +1,25 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
+    },
+    {
+      "name": "api",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "dev:api"],
+      "port": 5000,
+      "autoPort": true
+    },
+    {
+      "name": "ai",
+      "runtimeExecutable": "D:\\Coding\\Capstone\\MootCourtSimulator\\artifacts\\ai-service\\.venv\\Scripts\\python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "app.main:app", "--port", "8000", "--reload"],
+      "port": 8000,
+      "cwd": "artifacts/ai-service"
+    }
+  ]
+}

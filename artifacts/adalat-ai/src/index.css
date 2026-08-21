@@ -1,0 +1,458 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Adalat AI — "The Sovereign Court Record & Moot Chamber"
+ *
+ * The palette merges the solemnity of Pakistan's superior judiciary with
+ * high-contrast clarity:
+ * - Court newsprint & parchment backgrounds
+ * - Deep midnight ink / slate
+ * - Imperial judicial violet (--primary)
+ * - Objection stamp vermilion (--stamp)
+ * - Verified statute emerald seal (--seal)
+ * - Gold / brass judicial insignia (--gold)
+ */
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover-border: hsl(var(--popover-border));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  /* The vendored shadcn button and badge reference these by name
+     (border-primary-border, border-secondary-border, …). They were never
+     defined, so every Button rendered with its border-color unset — inherited
+     as currentColor — and the outline variant drew a border in its own text
+     colour. Registering them here fixes the components without editing twelve
+     vendored files. */
+  --color-primary-border: hsl(var(--primary-border));
+  --color-secondary-border: hsl(var(--secondary-border));
+  --color-destructive-border: hsl(var(--destructive-border));
+
+  /* Reserved semantics */
+  --color-stamp: hsl(var(--stamp));
+  --color-stamp-foreground: hsl(var(--stamp-foreground));
+  --color-stamp-wash: hsl(var(--stamp-wash));
+  --color-seal: hsl(var(--seal));
+  --color-seal-wash: hsl(var(--seal-wash));
+  --color-rule: hsl(var(--rule));
+  --color-gold: hsl(var(--gold));
+  --color-gold-wash: hsl(var(--gold-wash));
+
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --font-sans: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Newsreader', ui-serif, Georgia, serif;
+  --font-mono: 'Courier Prime', ui-monospace, 'Courier New', monospace;
+
+  --radius-sm: calc(var(--radius) - 1px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 5px);
+}
+
+:root {
+  --background: 80 12% 94%; /* Parchment newsprint */
+  --foreground: 216 28% 12%; /* Deep midnight ink */
+  --card: 75 30% 99%; /* Crisp bond paper */
+  --card-foreground: 216 28% 12%;
+  --card-border: 80 10% 84%;
+  --popover: 75 30% 99%;
+  --popover-foreground: 216 28% 12%;
+  --popover-border: 80 10% 84%;
+  
+  --primary: 265 54% 34%; /* High court royal duplicating violet */
+  --primary-foreground: 75 30% 99%;
+  
+  --secondary: 80 12% 89%;
+  --secondary-foreground: 216 28% 12%;
+  --muted: 80 12% 89%;
+  --muted-foreground: 216 14% 38%;
+  --accent: 265 30% 92%;
+  --accent-foreground: 265 54% 28%;
+  --destructive: 8 76% 44%;
+  --destructive-foreground: 75 30% 99%;
+
+  --stamp: 8 76% 44%; /* Objection stamp vermilion */
+  --stamp-foreground: 75 30% 99%;
+  --stamp-wash: 8 60% 95%;
+  --seal: 156 50% 28%; /* Verified statute emerald */
+  --seal-wash: 156 35% 93%;
+  --rule: 80 10% 82%;
+  --gold: 40 85% 42%;
+  --gold-wash: 40 70% 94%;
+
+  --border: 80 10% 84%;
+  --input: 80 10% 80%;
+  --ring: 265 54% 34%;
+
+  --primary-border: 265 54% 28%;
+  --secondary-border: 80 10% 82%;
+  --destructive-border: 8 76% 38%;
+  /* Consumed raw as [border-color:var(--button-outline)], so these carry a
+     whole colour rather than the bare triplet the others use. */
+  --button-outline: hsl(80 10% 78%);
+  --badge-outline: hsl(80 10% 78%);
+
+  --sidebar: 80 12% 90%;
+  --sidebar-foreground: 216 28% 12%;
+  --sidebar-border: 80 10% 82%;
+  --sidebar-primary: 265 54% 34%;
+  --sidebar-primary-foreground: 75 30% 99%;
+  --sidebar-accent: 265 22% 86%;
+  --sidebar-accent-foreground: 265 54% 28%;
+  --sidebar-ring: 265 54% 34%;
+
+  --radius: 0.25rem;
+
+  /* ------------------------------------------------------------------ *
+   * The chamber.
+   *
+   * The courtroom stage is lit and wood-panelled in both themes — a
+   * courtroom is dark walnut whether or not the page around it is
+   * parchment, so these do not simply mirror the page background. Light
+   * mode keeps the stage a touch warmer and brighter; the dark values sit
+   * further below. Spent only inside the SVG scene (fill="hsl(var(--…))"),
+   * so they stay theme-aware without a second palette. */
+  --wood-1: 32 40% 47%; /* rail / lit edge */
+  --wood-2: 28 38% 34%; /* panel face */
+  --wood-3: 26 42% 23%; /* seam / recess */
+  --wood-4: 24 44% 15%; /* deepest shadow */
+  --stage-air: 30 24% 27%; /* ambient wall wash behind the bench */
+  --stage-floor: 30 22% 41%; /* parquet */
+  --spot: 45 72% 86%; /* warm gallery light */
+}
+
+.dark {
+  --background: 220 28% 8%; /* #0c1017 - Dark chamber midnight */
+  --foreground: 75 20% 94%; /* Crisp ivory */
+  --card: 220 24% 12%; /* #131923 */
+  --card-foreground: 75 20% 94%;
+  --card-border: 220 18% 22%;
+  --popover: 220 24% 12%;
+  --popover-foreground: 75 20% 94%;
+  --popover-border: 220 18% 22%;
+  
+  --primary: 265 65% 72%; /* Luminous royal violet */
+  --primary-foreground: 220 28% 8%;
+  
+  --secondary: 220 20% 16%;
+  --secondary-foreground: 75 20% 94%;
+  --muted: 220 20% 16%;
+  --muted-foreground: 220 14% 64%;
+  --accent: 265 30% 22%;
+  --accent-foreground: 265 70% 85%;
+  --destructive: 8 72% 56%;
+  --destructive-foreground: 75 20% 94%;
+
+  --stamp: 8 72% 58%;
+  --stamp-foreground: 220 28% 8%;
+  --stamp-wash: 8 45% 16%;
+  --seal: 156 52% 54%;
+  --seal-wash: 156 35% 15%;
+  --rule: 220 18% 20%;
+  --gold: 40 85% 60%;
+  --gold-wash: 40 45% 18%;
+
+  --border: 220 18% 22%;
+  --input: 220 18% 26%;
+  --ring: 265 65% 72%;
+
+  --primary-border: 265 65% 78%;
+  --secondary-border: 220 18% 24%;
+  --destructive-border: 8 72% 62%;
+  --button-outline: hsl(220 18% 28%);
+  --badge-outline: hsl(220 18% 28%);
+
+  --sidebar: 220 26% 10%;
+  --sidebar-foreground: 75 20% 94%;
+  --sidebar-border: 220 18% 18%;
+  --sidebar-primary: 265 65% 72%;
+  --sidebar-primary-foreground: 220 28% 8%;
+  --sidebar-accent: 265 25% 20%;
+  --sidebar-accent-foreground: 265 70% 85%;
+  --sidebar-ring: 265 65% 72%;
+
+  /* The chamber, after dark: deeper walnut, moodier ambient. */
+  --wood-1: 30 34% 35%;
+  --wood-2: 27 38% 24%;
+  --wood-3: 25 42% 15%;
+  --wood-4: 22 46% 9%;
+  --stage-air: 25 32% 12%;
+  --stage-floor: 28 24% 21%;
+  --spot: 45 74% 80%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-synthesis-weight: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif text-foreground;
+    font-optical-sizing: auto;
+    letter-spacing: -0.012em;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+
+  /* Smooth scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* ------------------------------------------------------------------ *
+   * The cause-list voice.
+   *
+   * A cause list is the sheet posted outside a Pakistani courtroom naming
+   * the matters to be called that day. The whole app is set as one: rules
+   * rather than boxes, one large light serif per page rather than a bold
+   * heading on every card, and colour spent only where it carries a legal
+   * meaning. These classes exist so the pages stop restating that in
+   * utilities and drifting apart from each other, which is exactly what had
+   * happened — the case library was set as a printed list while every other
+   * page was still a dashboard wearing a wig.
+   * ------------------------------------------------------------------ */
+
+  /* Courier small caps. The apparatus of a law report: folio numbers,
+     column heads, the marginalia that is not the text itself. */
+  .apparatus {
+    @apply font-mono uppercase;
+    font-size: 0.6875rem;
+    letter-spacing: 0.09em;
+  }
+
+  /* The one large thing on a page.
+     Newsreader's optical sizing does the work at display size; weight added
+     on top of it reads as shouting rather than as a masthead, so this is
+     deliberately font-normal and every page keeps it that way. */
+  .display {
+    @apply text-balance font-serif font-normal text-foreground;
+    font-size: clamp(2.25rem, 1.62rem + 2.1vw, 3.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.022em;
+  }
+
+  /* A second-rank heading — a document inside a page rather than the page. */
+  .display-sm {
+    @apply text-balance font-serif font-normal text-foreground;
+    font-size: clamp(1.625rem, 1.4rem + 0.9vw, 2.125rem);
+    line-height: 1.06;
+    letter-spacing: -0.018em;
+  }
+
+  /* The paragraph under the heading. Serif, because it is prose being read,
+     not a UI label being scanned. */
+  .standfirst {
+    @apply max-w-xl font-serif leading-relaxed text-foreground/80;
+    font-size: 1.0625rem;
+  }
+
+  /* The rule under a page masthead. Double, as the printed sheet sets it
+     between its heading and its first entry. */
+  .masthead-rule {
+    @apply border-b-[3px] border-double border-rule;
+  }
+
+  /* A section label above a list or a table. Set as apparatus with a rule
+     under it rather than as a heading with an icon beside it. */
+  .rule-heading {
+    @apply flex items-baseline justify-between gap-3 border-b border-rule pb-2 font-mono uppercase text-muted-foreground;
+    font-size: 0.6875rem;
+    letter-spacing: 0.09em;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Replit's shadcn variant applies these to every Button and Badge but
+   * never shipped their definitions, so until now no button in the app had
+   * a hover state at all. Implemented as an inset overlay rather than a
+   * background swap so it composes over the stamp, seal and primary fills
+   * the courtroom controls already use.
+   * ------------------------------------------------------------------ */
+  .hover-elevate,
+  .active-elevate-2 {
+    position: relative;
+  }
+
+  .hover-elevate::after,
+  .active-elevate-2::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background-color: transparent;
+    transition: background-color 150ms ease;
+  }
+
+  .hover-elevate:hover::after {
+    background-color: hsl(var(--foreground) / 0.07);
+  }
+
+  .active-elevate-2:active::after {
+    background-color: hsl(var(--foreground) / 0.13);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * The record of proceedings.
+   * ------------------------------------------------------------------ */
+
+  /* One paragraph of the record. The left rule is the speaker's mark; the
+     wash behind it is reserved for the two marks a student must not miss. */
+  .record-entry {
+    @apply relative border-l-2 border-transparent pl-4 transition-colors duration-150;
+  }
+
+  .record-entry[data-mark='objection'] {
+    @apply rounded-r-sm border-stamp bg-stamp-wash/70;
+  }
+
+  .record-entry[data-mark='ruling'] {
+    @apply rounded-r-sm border-primary bg-accent/50;
+  }
+
+  .record-entry[data-mark='counsel'] {
+    @apply border-foreground/25;
+  }
+
+  .record-entry[data-mark='witness'] {
+    @apply rounded-r-sm border-seal/60 bg-seal-wash/30;
+  }
+
+  .record-entry[data-mark='bench'] {
+    @apply rounded-r-sm border-primary/50 bg-primary/5;
+  }
+
+  /* The bench's disposition of an objection, set as the stamp it is.
+     Sustained in seal green, overruled in stamp vermilion — the same two
+     colours that mark a verified and an unverified provision, because in
+     both cases they answer the same question: does this stand up? */
+  .judicial-stamp {
+    @apply inline-flex items-center justify-center rounded-sm border px-2 py-0.5 font-mono text-xs font-bold uppercase tracking-wider;
+  }
+
+  .judicial-stamp-sustained {
+    @apply inline-flex items-center justify-center rounded-sm border border-seal bg-seal-wash px-2 py-0.5 font-mono text-xs font-bold uppercase tracking-wider text-seal;
+  }
+
+  .judicial-stamp-overruled {
+    @apply inline-flex items-center justify-center rounded-sm border border-stamp bg-stamp-wash px-2 py-0.5 font-mono text-xs font-bold uppercase tracking-wider text-stamp;
+  }
+
+  /* Audio level meter. */
+  @keyframes wave-bounce {
+    0%,
+    100% {
+      height: 20%;
+    }
+    50% {
+      height: 90%;
+    }
+  }
+
+  .animate-wave-1 {
+    animation: wave-bounce 1s ease-in-out infinite;
+  }
+  .animate-wave-2 {
+    animation: wave-bounce 1s ease-in-out infinite 0.2s;
+  }
+  .animate-wave-3 {
+    animation: wave-bounce 1s ease-in-out infinite 0.4s;
+  }
+  .animate-wave-4 {
+    animation: wave-bounce 1s ease-in-out infinite 0.6s;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * The chamber.
+   *
+   * The stage is a single inline SVG; these carry only what CSS does
+   * better than SVG — the framing radius, the border rule that ties it to
+   * the rest of the record, and the outer vignette that seats the lit
+   * scene inside the page. Everything that moves is Framer Motion, so it
+   * already answers to prefers-reduced-motion.
+   * ------------------------------------------------------------------ */
+  .courtroom-stage {
+    @apply relative overflow-hidden rounded-md border border-rule;
+    box-shadow:
+      inset 0 0 6rem -1.5rem hsl(var(--wood-4) / 0.9),
+      inset 0 -2rem 4rem -2rem hsl(0 0% 0% / 0.35);
+  }
+
+  /* The always-visible strip under the stage that carries the last thing
+     said, so the record reads live even with the transcript closed. */
+  .chamber-ticker {
+    @apply border-l-2 pl-3 font-serif leading-snug;
+  }
+}
