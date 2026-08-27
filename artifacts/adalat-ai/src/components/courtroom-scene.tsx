@@ -55,9 +55,14 @@ const HEAD_SHADE = "hsl(30 26% 60%)";
  * exactly where a cartoon face would not.
  * ------------------------------------------------------------------ */
 
-type FigureVariant = "judge" | "you" | "opposing" | "witness";
+export type FigureVariant = "judge" | "you" | "opposing" | "witness";
 
-function Figure({ variant }: { variant: FigureVariant }) {
+/**
+ * Exported so the landing hero (`chamber-curtain.tsx`) draws the same people
+ * this stage does. Two hand-built figure sets would drift apart on the first
+ * edit to either, and the figures are the part a viewer recognises.
+ */
+export function Figure({ variant }: { variant: FigureVariant }) {
   // Robe/coat colour and the one accent that tells the role apart.
   const robe =
     variant === "witness" ? "hsl(215 16% 30%)" : "hsl(220 26% 11%)";

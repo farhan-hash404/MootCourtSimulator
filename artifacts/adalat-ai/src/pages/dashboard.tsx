@@ -89,7 +89,7 @@ export default function DashboardPage() {
       <header className="masthead-rule pb-7">
         <div className="flex items-start justify-between gap-4">
           <p className="apparatus pt-1 text-muted-foreground">Chambers</p>
-          <Link href="/">
+          <Link href="/cases">
             <Button className="shrink-0">Select a matter</Button>
           </Link>
         </div>
@@ -200,7 +200,7 @@ export default function DashboardPage() {
             <p className="py-10 font-serif leading-relaxed text-muted-foreground">
               Nothing argued yet.{" "}
               <Link
-                href="/"
+                href="/cases"
                 className="text-foreground underline underline-offset-4"
               >
                 Select a matter

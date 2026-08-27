@@ -176,10 +176,16 @@ export function VoiceControl({
     onSpeechEnd: () => {
       if (!bargingRef.current) return;
       bargingRef.current = false;
-      void interrupter.stopRecording().then((blob) => {
-        if (blob.size > 0) void postInterjection(blob);
-        else setStreamState("idle");
-      });
+      void interrupter
+        .stopRecording()
+        .then((blob) => {
+          if (blob.size > 0) void postInterjection(blob);
+          else setStreamState("idle");
+        })
+        .catch((err) => {
+          console.warn("Interrupter error:", err);
+          setStreamState("idle");
+        });
     },
   });
 
@@ -190,7 +196,9 @@ export function VoiceControl({
       opened = false;
     });
     return () => {
-      if (opened && !bargingRef.current) void interrupter.stopRecording();
+      if (opened && !bargingRef.current) {
+        void interrupter.stopRecording().catch(() => {});
+      }
     };
   }, [streamState === "playing"]);
 

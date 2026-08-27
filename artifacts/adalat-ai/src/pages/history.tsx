@@ -77,7 +77,7 @@ export default function HistoryPage() {
           <p className="apparatus pt-1 text-muted-foreground">
             Record of proceedings
           </p>
-          <Link href="/">
+          <Link href="/cases">
             <Button className="shrink-0">Select a matter</Button>
           </Link>
         </div>
@@ -157,7 +157,7 @@ export default function HistoryPage() {
             arguing it, decided once the bench has marked you.
           </p>
           <Link
-            href="/"
+            href="/cases"
             className="apparatus mt-6 inline-block text-foreground underline underline-offset-4"
           >
             Open the case library

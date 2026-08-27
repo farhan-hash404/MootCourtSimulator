@@ -9,7 +9,7 @@ export default function NotFound() {
         The page may have been renamed, or the link may be wrong.
       </p>
       <Link
-        href="/"
+        href="/cases"
         className="apparatus mt-6 text-foreground underline underline-offset-4"
       >
         Case library

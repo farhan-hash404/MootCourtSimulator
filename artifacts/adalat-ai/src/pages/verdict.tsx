@@ -124,7 +124,7 @@ export default function VerdictPage() {
         >
           ← Appearances
         </Link>
-        <Link href="/">
+        <Link href="/cases">
           <Button variant="outline" size="sm">
             Select the next matter
           </Button>

@@ -1,0 +1,1199 @@
+<title>CourtSimulator Venture Brief</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ------------------------------------------------------------------
+     Palette derives from the product's own courtroom tokens: imperial
+     purple (the bench), brass (nameplates), objection crimson, verified
+     emerald. Neutrals carry a violet bias so they read as chosen rather
+     than inherited grey.
+     ------------------------------------------------------------------ */
+  :root {
+    --ground:   #E9E5EF;
+    --paper:    #FCFBFD;
+    --surface:  #F4F1F7;
+    --ink:      #16121F;
+    --ink-2:    #4A4358;
+    --muted:    #7A7288;
+    --rule:     #DCD6E4;
+    --rule-2:   #C4BCD0;
+
+    --primary:  #3B2066;
+    --primary-2:#5B3A96;
+    --primary-3:#8B6DC4;
+    --primary-wash: #F1ECF9;
+
+    --brass:    #8A6410;
+    --brass-2:  #B8891F;
+    --brass-wash:#FAF3E2;
+
+    --stamp:    #A81F17;
+    --stamp-wash:#FBEEEC;
+
+    --seal:     #056145;
+    --seal-wash:#E6F4EF;
+
+    --shadow: 0 1px 2px rgba(22,18,31,.05), 0 8px 24px -8px rgba(22,18,31,.10);
+
+    /* One family for headings and body. A high-contrast display serif looked
+       handsome on screen and thinned out the moment it was projected, which is
+       the only viewing condition that matters here. */
+    --display: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --body: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:   #100D16;
+      --paper:    #191424;
+      --surface:  #211A2F;
+      --ink:      #F2EEF8;
+      --ink-2:    #C3BAD4;
+      --muted:    #9187A3;
+      --rule:     #322842;
+      --rule-2:   #453956;
+
+      --primary:  #C3A8F0;
+      --primary-2:#A585DE;
+      --primary-3:#7E5CBE;
+      --primary-wash: #241A38;
+
+      --brass:    #D9AE4A;
+      --brass-2:  #B8891F;
+      --brass-wash:#2C2314;
+
+      --stamp:    #F08A80;
+      --stamp-wash:#2E1815;
+
+      --seal:     #5DC9A6;
+      --seal-wash:#0E2A22;
+
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -8px rgba(0,0,0,.55);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:   #100D16;
+    --paper:    #191424;
+    --surface:  #211A2F;
+    --ink:      #F2EEF8;
+    --ink-2:    #C3BAD4;
+    --muted:    #9187A3;
+    --rule:     #322842;
+    --rule-2:   #453956;
+
+    --primary:  #C3A8F0;
+    --primary-2:#A585DE;
+    --primary-3:#7E5CBE;
+    --primary-wash: #241A38;
+
+    --brass:    #D9AE4A;
+    --brass-2:  #B8891F;
+    --brass-wash:#2C2314;
+
+    --stamp:    #F08A80;
+    --stamp-wash:#2E1815;
+
+    --seal:     #5DC9A6;
+    --seal-wash:#0E2A22;
+
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -8px rgba(0,0,0,.55);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding: clamp(.75rem, 2vw, 2rem);
+  }
+
+  .sheet {
+    max-width: 1180px;
+    margin: 0 auto;
+    background: var(--paper);
+    border: 1px solid var(--rule-2);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  /* ---- Masthead ---------------------------------------------------- */
+  .masthead {
+    padding: clamp(1.5rem, 3.4vw, 2.75rem) clamp(1.25rem, 3vw, 2.75rem) clamp(1.25rem, 2.4vw, 1.75rem);
+    border-bottom: 3px double var(--rule-2);
+    background: linear-gradient(180deg, var(--primary-wash), transparent 88%);
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--brass);
+    font-weight: 500;
+    margin: 0 0 .75rem;
+    display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .9rem;
+  }
+  h1 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(2.5rem, 6.6vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: -.035em;
+    margin: 0 0 .55rem;
+    text-wrap: balance;
+  }
+  .standfirst {
+    font-size: clamp(1rem, 1.9vw, 1.2rem);
+    color: var(--ink-2);
+    max-width: 62ch;
+    margin: 0 0 1.35rem;
+    text-wrap: balance;
+  }
+  .pills { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .04em;
+    padding: .34rem .7rem;
+    border-radius: 999px;
+    border: 1px solid var(--rule-2);
+    background: var(--paper);
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+  .pill--live { border-color: var(--seal); color: var(--seal); background: var(--seal-wash); font-weight: 700; }
+  .pill--rank { border-color: var(--brass-2); color: var(--brass); background: var(--brass-wash); font-weight: 700; }
+
+  /* ---- Section scaffolding ---------------------------------------- */
+  section {
+    padding: clamp(1.4rem, 3vw, 2.3rem) clamp(1.25rem, 3vw, 2.75rem);
+    border-bottom: 1px solid var(--rule);
+  }
+  section:last-child { border-bottom: 0; }
+  .docket {
+    display: flex; align-items: center; gap: .7rem;
+    margin: 0 0 1.15rem;
+  }
+  .docket span {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--brass);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .docket::after {
+    content: ""; flex: 1; height: 1px; background: var(--rule-2);
+  }
+  h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 3vw, 2.05rem);
+    line-height: 1.15;
+    letter-spacing: -.025em;
+    margin: 0 0 .5rem;
+    text-wrap: balance;
+  }
+  .lede { color: var(--ink-2); max-width: 68ch; margin: 0 0 1.3rem; }
+  p { margin: 0 0 .7rem; }
+
+  .grid { display: grid; gap: 1rem; }
+  .g2 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .g3 { grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); }
+  .g4 { grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+    padding: 1rem 1.05rem;
+  }
+  .card h3 {
+    font-size: 14px; font-weight: 700; margin: 0 0 .4rem;
+    letter-spacing: -.005em;
+  }
+  .card p { font-size: 13.5px; color: var(--ink-2); margin: 0; }
+
+  .card--pain { border-left: 3px solid var(--stamp); }
+  .card--pain h3 { color: var(--stamp); }
+  .card--win { border-left: 3px solid var(--seal); }
+  .card--win h3 { color: var(--seal); }
+
+  /* ---- Metric tiles ------------------------------------------------ */
+  .tile {
+    background: var(--paper);
+    border: 1px solid var(--rule-2);
+    border-radius: 5px;
+    padding: .85rem 1rem;
+  }
+  .tile .n {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(1.35rem, 3vw, 1.75rem);
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--primary);
+    display: block;
+  }
+  .tile .k {
+    font-size: 11.5px; color: var(--muted); margin-top: .3rem;
+    letter-spacing: .02em; display: block; line-height: 1.35;
+  }
+
+  /* ---- Pricing tiers ------------------------------------------------ */
+  .tiers { align-items: stretch; }
+  .tier { display: flex; flex-direction: column; background: var(--paper); }
+  .tier-name {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--muted); font-weight: 700; margin: 0 0 .35rem;
+  }
+  .tier-price {
+    font-size: 26px; font-weight: 800; letter-spacing: -.03em;
+    margin: 0 0 .7rem; line-height: 1;
+  }
+  .tier-price span { font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+  .tier-list { margin: 0 0 .8rem; padding-left: 1rem; }
+  .tier-list li { font-size: 13px; margin-bottom: .22rem; }
+  .tier-foot {
+    margin: auto 0 0; padding-top: .6rem; border-top: 1px solid var(--rule);
+    font-size: 11.5px; color: var(--muted);
+  }
+  /* Premium is the tier the model actually runs on, so it is the one that
+     carries emphasis — the free tier exists to feed it, not to compete. */
+  .tier--hero {
+    border-color: var(--primary);
+    background: var(--primary-wash);
+    box-shadow: inset 0 2px 0 var(--primary);
+  }
+  .tier--hero .tier-name, .tier--hero .tier-price { color: var(--primary); }
+
+  /* ---- Role swap: who used to be needed, who is needed now --------- */
+  .swap { border: 1px solid var(--rule-2); border-radius: 5px; overflow: hidden; }
+  .swap-head, .swap-row {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(160px, 1.6fr);
+    gap: .9rem;
+    padding: .6rem .9rem;
+    align-items: baseline;
+  }
+  .swap-head {
+    background: var(--surface);
+    border-bottom: 1px solid var(--rule-2);
+    font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .swap-row { border-bottom: 1px solid var(--rule); font-size: 13.5px; }
+  .swap-row:last-child { border-bottom: 0; }
+  .swap-row .role { color: var(--ink); }
+  .swap-row .was { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1px; }
+  .swap-row .now { color: var(--primary); font-weight: 500; }
+  /* The one row that is not replaced is the point of the table, so it is the
+     only row that carries weight — the student stays. */
+  .swap-row--human { background: var(--brass-wash); }
+  .swap-row--human .was { color: var(--ink-2); text-decoration: none; }
+  .swap-row--human .now { color: var(--brass); }
+
+  @media (max-width: 620px) {
+    .swap-head { display: none; }
+    .swap-row { grid-template-columns: 1fr; gap: .15rem; }
+    .swap-row .was::before { content: "Was: "; }
+    .swap-row .now::before { content: "Now: "; }
+  }
+
+  /* ---- Slim proof bar ---------------------------------------------- */
+  .proofbar {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.4rem;
+    margin: 1.3rem 0 0; padding-top: .8rem;
+    border-top: 1px solid var(--rule);
+    font-size: 12.5px; color: var(--ink-2);
+  }
+  .pb b {
+    font-family: var(--mono); font-variant-numeric: tabular-nums;
+    color: var(--seal); font-size: 14px; margin-right: .25rem;
+  }
+  .pb-note { color: var(--muted); font-size: 11.5px; flex: 1 1 260px; }
+
+  /* ---- Product screenshot frame -----------------------------------
+     The courtroom is drawn from the app's own stage tokens (--wood-1..4,
+     --gold, --spot in adalat-ai/src/index.css), so the poster and the
+     product cannot drift apart into two different-looking courtrooms.
+     It stays dark in both themes because the room itself is dark. */
+  .screen {
+    border: 1px solid var(--rule-2);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--paper);
+    box-shadow: var(--shadow);
+  }
+  .screen-chrome {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+    padding: .6rem .95rem;
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface);
+  }
+  .chrome-brand { font-weight: 700; font-size: 14px; letter-spacing: -.01em; }
+  .chrome-tabs {
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--muted); text-align: right;
+  }
+  .screen-head { padding: .85rem .95rem .7rem; }
+  .screen-eyebrow {
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted); margin: 0 0 .3rem;
+  }
+  .screen-title { font-size: 19px; font-weight: 700; letter-spacing: -.02em; margin: 0 0 .55rem; }
+  .screen-title em { font-style: italic; font-weight: 400; }
+  .screen-phases { display: flex; flex-wrap: wrap; gap: .3rem .9rem; margin: 0; }
+  .ph {
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted); padding-bottom: 2px;
+  }
+  .ph.on { color: var(--ink); font-weight: 700; border-bottom: 2px solid var(--ink); }
+  .stage { line-height: 0; background: hsl(24 44% 15%); }
+  .stage svg { width: 100%; height: auto; display: block; aspect-ratio: 12 / 7; }
+  .screen-transcript {
+    padding: .75rem .95rem;
+    background: var(--surface);
+    border-top: 1px solid var(--rule);
+    border-left: 3px solid var(--primary);
+  }
+  .screen-transcript .who {
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--primary); font-weight: 700; margin: 0 0 .25rem;
+  }
+  .screen-transcript .line { font-size: 13.5px; color: var(--ink-2); margin: 0; }
+  .screen-dock {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: .45rem;
+    padding: .7rem .95rem .8rem;
+    border-top: 1px solid var(--rule);
+  }
+  .dk {
+    font-size: 11.5px; padding: .3rem .75rem; border-radius: 999px;
+    border: 1px solid transparent; color: var(--ink-2); white-space: nowrap;
+  }
+  .dk--obj { border-color: var(--stamp); color: var(--stamp); }
+  .dk--go, .dk--next { background: var(--primary); color: var(--paper); font-weight: 600; }
+  :root[data-theme="dark"] .dk--go, :root[data-theme="dark"] .dk--next { color: #16121F; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .dk--go,
+    :root:not([data-theme="light"]) .dk--next { color: #16121F; }
+  }
+
+  /* ---- Tables ------------------------------------------------------ */
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 13.5px; }
+  th, td { text-align: left; padding: .6rem .7rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted); font-weight: 500;
+    border-bottom: 1px solid var(--rule-2);
+  }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  .us { background: var(--primary-wash); }
+  .us td { font-weight: 600; }
+
+  /* ---- Bar charts (single-hue sequential; correct by construction) -- */
+  .chart { display: grid; gap: .55rem; }
+  .row { display: grid; grid-template-columns: minmax(72px, auto) 1fr minmax(96px, auto); gap: .7rem; align-items: center; }
+  .row .lab { font-size: 12.5px; color: var(--ink-2); }
+  .row .val {
+    font-family: var(--mono); font-variant-numeric: tabular-nums;
+    font-size: 12.5px; text-align: right; font-weight: 500;
+  }
+  .track { background: var(--surface); border-radius: 3px; height: 26px; overflow: hidden; border: 1px solid var(--rule); }
+  .bar { height: 100%; border-radius: 0 3px 3px 0; }
+  .b1 { background: var(--primary-3); }
+  .b2 { background: var(--primary-2); }
+  .b3 { background: var(--primary); }
+
+  /* ---- Roadmap ----------------------------------------------------- */
+  .gantt { display: grid; gap: .4rem; }
+  .grow { display: grid; grid-template-columns: minmax(150px, 1.4fr) 3fr minmax(62px, auto); gap: .7rem; align-items: center; font-size: 13px; }
+  .gtrack { position: relative; height: 22px; background: var(--surface); border: 1px solid var(--rule); border-radius: 3px; }
+  .gbar { position: absolute; top: 0; bottom: 0; border-radius: 2px; }
+  .gwk { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 12px; color: var(--ink-2); text-align: right; }
+  .phase-label { display: flex; align-items: center; gap: .45rem; }
+  .dot { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: .9rem; font-size: 12px; color: var(--ink-2); }
+  .legend div { display: flex; align-items: center; gap: .4rem; }
+
+  /* ---- Notes ------------------------------------------------------- */
+  .note {
+    font-size: 11.5px; color: var(--muted); line-height: 1.5;
+    border-top: 1px solid var(--rule); padding-top: .7rem; margin-top: 1.1rem;
+  }
+  .note strong { color: var(--ink-2); }
+
+  ul { margin: 0; padding-left: 1.1rem; }
+  li { margin-bottom: .35rem; font-size: 13.5px; color: var(--ink-2); }
+  li strong { color: var(--ink); }
+
+  .kicker {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted); font-weight: 500;
+    margin: 0 0 .45rem;
+  }
+
+  .foot {
+    padding: 1.2rem clamp(1.25rem, 3vw, 2.75rem) 1.6rem;
+    background: var(--surface);
+    font-size: 12px; color: var(--muted);
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .sheet { box-shadow: none; border: 0; max-width: none; }
+    section { break-inside: avoid; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="sheet">
+
+  <header class="masthead">
+    <p class="eyebrow">
+      <span>Final Year Capstone · 2026</span>
+      <span>Venture Brief for the Rector</span>
+    </p>
+    <h1>CourtSimulator</h1>
+    <p class="standfirst">
+      A voice-first AI courtroom where Pakistani law students argue a real case against
+      autonomous opposing counsel, a presiding judge and examinable witnesses — grounded
+      in statute that has been verified word-for-word.
+    </p>
+    <div class="pills">
+      <span class="pill pill--rank">Top 5 Capstone Finalist</span>
+      <span class="pill pill--live">System live &amp; running today</span>
+      <span class="pill">53/53 provisions verified</span>
+      <span class="pill">Cost/turn measured: $0.0095</span>
+      <span class="pill">Deployable in 1 day</span>
+    </div>
+  </header>
+
+  <!-- ================= PROBLEM ================= -->
+  <section>
+    <div class="docket"><span>The Problem</span></div>
+    <h2>Law graduates qualify without ever having argued.</h2>
+    <p class="lede">
+      Advocacy is a performance skill, but Pakistani legal education assesses it on paper.
+      A student can pass every exam and still have never faced an objection.
+    </p>
+    <div class="grid g3">
+      <div class="card card--pain">
+        <h3>No repeatable practice</h3>
+        <p>Moot courts need a judge, opposing counsel and witnesses in one room. Most students get a handful of moots in five years — some get none.</p>
+      </div>
+      <div class="card card--pain">
+        <h3>The bar filter is brutal</h3>
+        <p>LAW-GAT — mandatory for bar enrolment — has seen pass rates widely reported near 20–30%. The gap is applied advocacy, not memorised doctrine.</p>
+      </div>
+      <div class="card card--pain">
+        <h3>Generic AI misquotes the law</h3>
+        <p>Students already use ChatGPT. It invents Pakistani sections confidently. A tool that misquotes a statute to a law student is worse than no tool.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SOLUTION ================= -->
+  <section>
+    <div class="docket"><span>The Solution</span></div>
+    <h2>One human. The court supplies everyone else.</h2>
+    <p class="lede">
+      A moot court has always needed five people free at the same hour, in the same room.
+      That single logistical fact is why students get so little practice. We remove four of
+      those five — the student is the only human the hearing requires.
+    </p>
+
+    <div class="swap">
+      <div class="swap-head">
+        <span>Role in the hearing</span>
+        <span>Traditionally</span>
+        <span>In CourtSimulator</span>
+      </div>
+      <div class="swap-row swap-row--human">
+        <span class="role"><b>Arguing counsel</b></span>
+        <span class="was">The student</span>
+        <span class="now"><b>The student — the one human</b></span>
+      </div>
+      <div class="swap-row">
+        <span class="role"><b>Presiding judge</b></span>
+        <span class="was">Faculty member or senior advocate</span>
+        <span class="now">AI agent · reads the statute, then rules</span>
+      </div>
+      <div class="swap-row">
+        <span class="role"><b>Opposing counsel</b></span>
+        <span class="was">A second student, separately prepared</span>
+        <span class="now">AI agent · objects on its own initiative</span>
+      </div>
+      <div class="swap-row">
+        <span class="role"><b>Witness</b></span>
+        <span class="was">A volunteer, briefed beforehand</span>
+        <span class="now">AI agent · testifies only to what it knows</span>
+      </div>
+      <div class="swap-row">
+        <span class="role"><b>Examiner</b></span>
+        <span class="was">Faculty, days later, if at all</span>
+        <span class="now">AI agent · scored verdict, immediately</span>
+      </div>
+    </div>
+
+    <p class="kicker" style="margin-top:1.5rem">What removing four humans actually buys</p>
+    <div class="grid g4">
+      <div class="card card--win">
+        <h3>No scheduling</h3>
+        <p>Nobody has to be free. A student can hold a full hearing at two in the morning, the night before an exam.</p>
+      </div>
+      <div class="card card--win">
+        <h3>Unlimited repetition</h3>
+        <p>The same case can be argued ten different ways. Advocacy is a skill built by repetition, which the old model cannot supply.</p>
+      </div>
+      <div class="card card--win">
+        <h3>One consistent bench</h3>
+        <p>Every student faces the same standard. Marking stops depending on which faculty member happened to be free.</p>
+      </div>
+      <div class="card card--win">
+        <h3>Near-zero marginal cost</h3>
+        <p>The fifth hearing costs the same as the first — under three rupees a turn. Four salaries do not scale; this does.</p>
+      </div>
+    </div>
+
+    <p class="proofbar">
+      <span class="pb"><b>1.00</b> retrieval hit@1</span>
+      <span class="pb"><b>0/36</b> injection attacks landed</span>
+      <span class="pb"><b>0/9</b> witness fabrications</span>
+      <span class="pb"><b>53/53</b> provisions verified</span>
+      <span class="pb-note">Measured on a fixed evaluation harness against the same code the product runs — not demo anecdotes.</span>
+    </p>
+  </section>
+
+  <!-- ================= THE PRODUCT ================= -->
+  <section>
+    <div class="docket"><span>The Product</span></div>
+    <h2>This is not a mockup. It is running today.</h2>
+    <p class="lede">
+      The student stands at a rostrum before a full bench. Who is speaking is lit; the witness
+      box fills when a witness is called; every ruling is stamped onto the record in real time.
+    </p>
+
+    <div class="screen">
+      <div class="screen-chrome">
+        <span class="chrome-brand">CourtSimulator</span>
+        <span class="chrome-tabs">Case Library · Chambers · Appearances · Statutes</span>
+      </div>
+      <div class="screen-head">
+        <p class="screen-eyebrow">AD-0004 · Civil · For the Petitioner</p>
+        <p class="screen-title">Tariq Khan <em>v.</em> Capital Development Authority</p>
+        <p class="screen-phases">
+          <span class="ph on">1 Opening submissions</span>
+          <span class="ph">2 Examination-in-chief</span>
+          <span class="ph">3 Cross-examination</span>
+          <span class="ph">4 Closing arguments</span>
+          <span class="ph">5 Judgment</span>
+        </p>
+      </div>
+
+      <div class="stage">
+        <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" role="img"
+             aria-label="The courtroom: a judge on an elevated bench beneath a gilt scales-of-justice emblem, a witness box to the left, and petitioner and respondent tables in the foreground.">
+          <defs>
+            <radialGradient id="spot" cx="50%" cy="20%" r="62%">
+              <stop offset="0%" stop-color="hsl(45 72% 86%)" stop-opacity=".50"/>
+              <stop offset="55%" stop-color="hsl(45 72% 86%)" stop-opacity=".12"/>
+              <stop offset="100%" stop-color="hsl(45 72% 86%)" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="hsl(30 22% 41%)"/>
+              <stop offset="100%" stop-color="hsl(24 44% 15%)"/>
+            </linearGradient>
+            <linearGradient id="deskA" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="hsl(32 40% 47%)"/>
+              <stop offset="100%" stop-color="hsl(26 42% 23%)"/>
+            </linearGradient>
+            <linearGradient id="vig" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="hsl(24 44% 15%)" stop-opacity="0"/>
+              <stop offset="100%" stop-color="hsl(24 44% 15%)" stop-opacity=".85"/>
+            </linearGradient>
+          </defs>
+
+          <!-- wall + panelling -->
+          <rect x="0" y="0" width="1200" height="700" fill="hsl(30 24% 27%)"/>
+          <rect x="0" y="0" width="1200" height="430" fill="hsl(28 38% 34%)"/>
+          <g stroke="hsl(26 42% 23%)" stroke-width="5" opacity=".85">
+            <line x1="150" y1="0" x2="150" y2="430"/><line x1="300" y1="0" x2="300" y2="430"/>
+            <line x1="450" y1="0" x2="450" y2="430"/><line x1="750" y1="0" x2="750" y2="430"/>
+            <line x1="900" y1="0" x2="900" y2="430"/><line x1="1050" y1="0" x2="1050" y2="430"/>
+          </g>
+
+          <!-- floor + perspective boards -->
+          <rect x="0" y="430" width="1200" height="270" fill="url(#floor)"/>
+          <g stroke="hsl(24 44% 15%)" stroke-width="2" opacity=".45">
+            <line x1="600" y1="430" x2="60"   y2="700"/>
+            <line x1="600" y1="430" x2="330"  y2="700"/>
+            <line x1="600" y1="430" x2="870"  y2="700"/>
+            <line x1="600" y1="430" x2="1140" y2="700"/>
+          </g>
+          <line x1="90" y1="437" x2="1110" y2="437" stroke="hsl(32 40% 47%)" stroke-width="2" opacity=".5"/>
+
+          <!-- key light -->
+          <rect x="0" y="0" width="1200" height="700" fill="url(#spot)"/>
+
+          <!-- gilt emblem: scales of justice -->
+          <g transform="translate(600 150)" stroke="hsl(40 85% 42%)" fill="none" stroke-width="4">
+            <circle r="70" stroke-width="3"/>
+            <line x1="0" y1="-42" x2="0" y2="40"/>
+            <line x1="-44" y1="-22" x2="44" y2="-22"/>
+            <line x1="-30" y1="40" x2="30" y2="40"/>
+            <path d="M -44 -22 L -60 6 L -28 6 Z"/>
+            <path d="M 44 -22 L 28 6 L 60 6 Z"/>
+            <circle cy="-42" r="6" fill="hsl(40 85% 42%)"/>
+          </g>
+
+          <!-- the bench -->
+          <rect x="470" y="245" width="130" height="150" rx="14" fill="hsl(24 44% 15%)"/>
+          <g transform="translate(600 300)">
+            <ellipse cy="52" rx="46" ry="58" fill="hsl(220 26% 11%)"/>
+            <circle cy="-4" r="30" fill="hsl(35 28% 71%)"/>
+            <path d="M -13 26 L 0 62 L 13 26 Z" fill="hsl(40 30% 92%)"/>
+          </g>
+          <rect x="440" y="352" width="320" height="58" rx="5" fill="url(#deskA)"/>
+          <rect x="415" y="396" width="370" height="46" rx="4" fill="hsl(26 42% 23%)"/>
+          <ellipse cx="712" cy="345" rx="17" ry="7" fill="hsl(24 44% 15%)"/>
+
+          <!-- witness box, left -->
+          <rect x="300" y="368" width="185" height="74" rx="5" fill="hsl(28 38% 34%)"/>
+          <rect x="300" y="360" width="185" height="9" rx="4" fill="hsl(40 85% 42%)"/>
+
+          <!-- nameplates on the bench line -->
+          <g font-family="ui-monospace, monospace" font-size="15" font-weight="700"
+             letter-spacing="1.4" text-anchor="middle">
+            <rect x="345" y="400" width="112" height="24" rx="3" fill="hsl(40 85% 42%)"/>
+            <text x="401" y="417" fill="hsl(24 44% 15%)">WITNESS</text>
+            <rect x="527" y="400" width="146" height="24" rx="3" fill="hsl(40 85% 42%)"/>
+            <text x="600" y="417" fill="hsl(24 44% 15%)">THE BENCH</text>
+          </g>
+
+          <!-- Foreground haze sits *behind* the counsel row: in the app the
+               near tables and their brass plates are the brightest things on
+               screen, so anything painted over them reads as a dimmed product. -->
+          <rect x="0" y="470" width="1200" height="230" fill="url(#vig)"/>
+
+          <!-- counsel tables -->
+          <g>
+            <ellipse cx="272" cy="560" rx="40" ry="50" fill="hsl(220 26% 11%)"/>
+            <circle cx="272" cy="512" r="26" fill="hsl(35 28% 71%)"/>
+            <rect x="120" y="588" width="310" height="60" rx="5" fill="url(#deskA)"/>
+            <rect x="100" y="632" width="350" height="46" rx="4" fill="hsl(26 42% 23%)"/>
+            <rect x="190" y="596" width="46" height="30" rx="2" fill="hsl(40 26% 88%)" opacity=".85"/>
+          </g>
+          <g>
+            <ellipse cx="928" cy="560" rx="40" ry="50" fill="hsl(220 26% 11%)"/>
+            <circle cx="928" cy="512" r="26" fill="hsl(35 28% 71%)"/>
+            <rect x="770" y="588" width="310" height="60" rx="5" fill="url(#deskA)"/>
+            <rect x="750" y="632" width="350" height="46" rx="4" fill="hsl(26 42% 23%)"/>
+            <rect x="964" y="596" width="46" height="30" rx="2" fill="hsl(40 26% 88%)" opacity=".85"/>
+          </g>
+          <g font-family="ui-monospace, monospace" font-size="15" font-weight="700"
+             letter-spacing="1.4" text-anchor="middle">
+            <rect x="176" y="636" width="200" height="26" rx="3" fill="hsl(40 85% 42%)"/>
+            <text x="276" y="654" fill="hsl(24 44% 15%)">PETITIONER · YOU</text>
+            <rect x="846" y="636" width="164" height="26" rx="3" fill="hsl(40 85% 42%)"/>
+            <text x="928" y="654" fill="hsl(24 44% 15%)">RESPONDENT</text>
+          </g>
+
+          <!-- on-stage chrome -->
+          <g font-family="ui-monospace, monospace" letter-spacing="2">
+            <text x="46" y="52" font-size="19" font-weight="700"
+                  fill="hsl(40 30% 92%)" opacity=".82">OPENING SUBMISSIONS</text>
+            <rect x="36" y="628" width="278" height="38" rx="4" fill="hsl(24 44% 15%)" opacity=".9"/>
+            <text x="58" y="653" font-size="16" font-weight="700" fill="hsl(40 30% 92%)">THE BENCH IS SPEAKING</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="screen-transcript">
+        <p class="who">The Bench</p>
+        <p class="line">The matter of Tariq Khan v. Capital Development Authority is called.
+          Counsel for the petitioner, you may proceed with your opening.</p>
+      </div>
+
+      <div class="screen-dock">
+        <span class="dk">Case</span>
+        <span class="dk dk--obj">Object</span>
+        <span class="dk dk--go">Rostrum</span>
+        <span class="dk">Transcript</span>
+        <span class="dk dk--next">Next stage</span>
+      </div>
+    </div>
+
+    <div class="grid g3" style="margin-top:1.2rem">
+      <div class="card"><h3>Speak, don’t type</h3><p>The student argues out loud at the rostrum and the court answers in distinct voices — the skill being trained is oral advocacy.</p></div>
+      <div class="card"><h3>The room shows the state</h3><p>Whoever holds the floor is lit. A sustained objection stamps the record. No manual reading to know what just happened.</p></div>
+      <div class="card"><h3>Every citation audited</h3><p>Provisions are checked against the verified corpus before the student hears them, and flagged in the transcript if unverified.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= UNIT ECONOMICS ================= -->
+  <section>
+    <div class="docket"><span>Unit Economics</span></div>
+    <h2>What one hearing costs, and what it earns.</h2>
+    <p class="lede">
+      Every model call the system makes is metered, so the cost side of this is measured rather
+      than estimated. One courtroom turn — a question, an objection, a ruling — costs under
+      three rupees.
+    </p>
+
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Unit</th>
+            <th>What it is</th>
+            <th>Cost to us</th>
+            <th>We charge</th>
+            <th>We keep</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1 turn</strong></td>
+            <td>One spoken exchange with the court</td>
+            <td class="num">PKR 2.7</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+          </tr>
+          <tr>
+            <td><strong>1 hearing</strong></td>
+            <td>A full case, ~30 turns end to end</td>
+            <td class="num">PKR 80</td>
+            <td class="num">PKR 1,400</td>
+            <td class="num">PKR 1,320</td>
+          </tr>
+          <tr>
+            <td><strong>1 Basic user</strong></td>
+            <td>Per month — free, one short hearing</td>
+            <td class="num">PKR 30</td>
+            <td class="num">PKR 0</td>
+            <td class="num">−PKR 30</td>
+          </tr>
+          <tr>
+            <td><strong>1 Premium user</strong></td>
+            <td>Per month at ~6 hearings — $20</td>
+            <td class="num">PKR 480</td>
+            <td class="num">PKR 5,600</td>
+            <td class="num">PKR 5,120</td>
+          </tr>
+          <tr class="us">
+            <td><strong>1 college</strong></td>
+            <td>Per year — 50 seats, ~35% active</td>
+            <td class="num">PKR 28,800</td>
+            <td class="num">PKR 250,000</td>
+            <td class="num">PKR 221,200</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="kicker" style="margin-top:1.6rem">“Unlimited” with a 12-hour cooldown — what it costs us at the extreme</p>
+    <div class="grid g3">
+      <div class="card">
+        <h3>Typical · 6 hearings</h3>
+        <p>Costs PKR 480 against PKR 5,600. <strong>91% margin.</strong> This is what the revenue model assumes.</p>
+      </div>
+      <div class="card">
+        <h3>Heavy · 20 hearings</h3>
+        <p>Costs PKR 1,600. <strong>71% margin.</strong> A student in exam week, practising most days.</p>
+      </div>
+      <div class="card card--win">
+        <h3>Ceiling · 60 hearings</h3>
+        <p>Every cooldown used, all month. Costs PKR 4,800. <strong>Still profitable at 14%.</strong></p>
+      </div>
+    </div>
+    <p class="note" style="margin-top:.9rem">
+      <strong>This is why the cooldown exists.</strong> Truly unlimited access makes the cost of a
+      subscriber unbounded — one determined user could cost more than they pay. A hearing every
+      12 hours reads as unlimited to a student who will never use two a day, and caps our
+      worst possible customer below the subscription price. The cap is a commercial control,
+      not a product limitation.
+    </p>
+
+    <div class="grid g4" style="margin-top:1.4rem">
+      <div class="tile"><span class="n">91%</span><span class="k">Gross margin on a Premium subscription, typical use</span></div>
+      <div class="tile"><span class="n">88%</span><span class="k">Gross margin on an Enterprise licence</span></div>
+      <div class="tile"><span class="n">PKR 96k</span><span class="k">Total fixed infrastructure cost for a year</span></div>
+      <div class="tile"><span class="n">1</span><span class="k">Enterprise licence covers the whole year’s infrastructure</span></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:1.2rem">
+      <div class="card card--win">
+        <h3>Why the margin holds as we grow</h3>
+        <p>Cost scales per turn, not per user — an idle account costs nothing, and a free
+        account costs pennies. The objection cascade already routes routine screening to a
+        cheaper model, cutting ~9% off spend with no measured quality loss.</p>
+      </div>
+      <div class="card card--pain">
+        <h3>The honest risk</h3>
+        <p>$20 is premium pricing for this market, so the number to watch is conversion off
+        the free tier, not margin. The model needs roughly 3 in 100 Basic users to upgrade.
+        The pilot exists to test exactly that — and Enterprise is the hedge if it comes in low.</p>
+      </div>
+    </div>
+
+    <p class="note">
+      Converted at PKR 280/USD. <strong>Only the cost column is measured</strong> — $0.0095 per
+      turn, metered per model call across the whole service. Prices, hearing length and
+      utilisation are assumptions, shown here so they can be argued with.
+    </p>
+  </section>
+
+  <!-- ================= MARKET ================= -->
+  <section>
+    <div class="docket"><span>Market Analysis</span></div>
+    <h2>Pakistan first — and Pakistan is enough.</h2>
+    <p class="lede">
+      We are not chasing a global category. The addressable market is every law college in
+      Pakistan and the students inside it — sized bottom-up from institution counts, not
+      from a headline industry figure.
+    </p>
+
+    <div class="scroll">
+      <div class="chart" style="min-width:520px">
+        <div class="row">
+          <span class="lab">TAM</span>
+          <div class="track"><div class="bar b1" style="width:100%"></div></div>
+          <span class="val">PKR ~2.0B</span>
+        </div>
+        <div class="row">
+          <span class="lab">SAM</span>
+          <div class="track"><div class="bar b2" style="width:31%"></div></div>
+          <span class="val">PKR ~430M</span>
+        </div>
+        <div class="row">
+          <span class="lab">SOM · 3 yr</span>
+          <div class="track"><div class="bar b3" style="width:6%"></div></div>
+          <span class="val">PKR ~38M</span>
+        </div>
+      </div>
+    </div>
+    <div class="legend">
+      <div><span class="dot" style="background:var(--primary-3)"></span> <strong>TAM</strong> — every PK law college on Enterprise + every law student on Premium</div>
+      <div><span class="dot" style="background:var(--primary-2)"></span> <strong>SAM</strong> — reachable institutions + the ~20% of students who can afford Premium</div>
+      <div><span class="dot" style="background:var(--primary)"></span> <strong>SOM</strong> — our Year-3 model: 45 colleges, 400 Premium subscribers</div>
+    </div>
+    <p class="note" style="margin-top:1rem">
+      Bars are scaled for legibility, not to relative area. Built bottom-up: ~100+ recognised
+      law colleges × PKR 250k, plus the student base × $20/month. The SOM figure is the same
+      PKR 38M as the Year-3 revenue model below — the two are one calculation, not two claims.
+      <strong>Confirm the college and enrolment counts against current HEC/PBC listings.</strong>
+    </p>
+
+    <div class="grid g3" style="margin-top:1.3rem">
+      <div class="tile"><span class="n">~100+</span><span class="k">HEC/PBC-recognised law colleges in Pakistan — the whole beachhead</span></div>
+      <div class="tile"><span class="n">1.9%</span><span class="k">Share of the total market our Year-3 plan actually requires</span></div>
+      <div class="tile"><span class="n">1</span><span class="k">Enterprise licence covers a year of infrastructure</span></div>
+    </div>
+  </section>
+
+  <!-- ================= COMPETITION ================= -->
+  <section>
+    <div class="docket"><span>Competitive Landscape</span></div>
+    <h2>Everyone else is doing research or flashcards.</h2>
+    <p class="lede">
+      The well-funded players serve practising firms. The education players sell recorded
+      content. Nobody runs an adversarial, voice-driven hearing on verified Pakistani law.
+    </p>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>What it does</th>
+            <th>Scale signal</th>
+            <th>Why it isn’t us</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Harvey AI</strong></td>
+            <td>Legal AI for large law firms</td>
+            <td class="num">~$3B val.</td>
+            <td>Practitioner workflow, not training. No simulation, no Pakistani law.</td>
+          </tr>
+          <tr>
+            <td><strong>CoCounsel</strong> (Casetext)</td>
+            <td>AI legal research assistant</td>
+            <td class="num">$650M exit</td>
+            <td>Answers questions. Never argues back. US-only corpus.</td>
+          </tr>
+          <tr>
+            <td><strong>Quimbee · Barbri</strong></td>
+            <td>Legal education &amp; US bar prep</td>
+            <td class="num">Est. players</td>
+            <td>Video and flashcards. Passive. No live opponent.</td>
+          </tr>
+          <tr>
+            <td><strong>ChatGPT (generic)</strong></td>
+            <td>What students use today</td>
+            <td class="num">Free</td>
+            <td>Hallucinates Pakistani sections. No objection flow, no citation audit.</td>
+          </tr>
+          <tr class="us">
+            <td><strong>CourtSimulator</strong></td>
+            <td>Adversarial voice moot court</td>
+            <td class="num">Live</td>
+            <td>Verified PK statute · multi-agent hearing · audited citations · local pricing.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid g3" style="margin-top:1.2rem">
+      <div class="card card--win">
+        <h3>Defensible corpus</h3>
+        <p>53 provisions of QSO, PPC, CrPC and the Constitution diffed word-for-word against official prints. That verification is the moat — it is slow, manual work a competitor must repeat.</p>
+      </div>
+      <div class="card card--win">
+        <h3>Adversarial by architecture</h3>
+        <p>A LangGraph multi-agent graph, not one model wearing hats. Objection → ruling → testimony is a routed path, which no single chatbot completion can reproduce.</p>
+      </div>
+      <div class="card card--win">
+        <h3>Priced for this market</h3>
+        <p>Built to run at under one cent per turn, so it can be sold in rupees to Pakistani institutions and still hold margin.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BUSINESS MODEL ================= -->
+  <section>
+    <div class="docket"><span>Business Model &amp; Revenue</span></div>
+    <h2>Sell to institutions, upsell to students.</h2>
+    <p class="lede">
+      Colleges buy accreditation-relevant advocacy training; students buy exam confidence.
+      The institutional contract is the anchor because it is one sale, many seats.
+    </p>
+
+    <div class="grid g3 tiers">
+      <div class="card tier">
+        <p class="tier-name">Basic</p>
+        <p class="tier-price">Free</p>
+        <ul class="tier-list">
+          <li>One short hearing a month</li>
+          <li>Opening submissions only</li>
+          <li>No scored verdict</li>
+        </ul>
+        <p class="tier-foot">Costs us ~PKR 30/month. This is the funnel, not the product.</p>
+      </div>
+      <div class="card tier tier--hero">
+        <p class="tier-name">Premium</p>
+        <p class="tier-price">$20 <span>/ month</span></p>
+        <ul class="tier-list">
+          <li>Unlimited cases — a fresh hearing every 12 hours</li>
+          <li>Witness examination &amp; cross</li>
+          <li>Scored verdict and transcript</li>
+        </ul>
+        <p class="tier-foot">PKR 5,600. Typical use costs us ~PKR 480/month — a <strong>91% margin</strong>.</p>
+      </div>
+      <div class="card tier">
+        <p class="tier-name">Enterprise</p>
+        <p class="tier-price">PKR 250k <span>/ year</span></p>
+        <ul class="tier-list">
+          <li>50 seats for one college</li>
+          <li>Faculty dashboard &amp; analytics</li>
+          <li>Custom case library</li>
+        </ul>
+        <p class="tier-foot">Costs us ~PKR 28.8k/year — an <strong>88% margin</strong>.</p>
+      </div>
+    </div>
+    <p class="note" style="margin-top:1rem">
+      <strong>Why a free tier at all:</strong> a student will not pay to practise something they
+      have never tried. Basic is deliberately shaped to prove the product and stop short of it —
+      you argue an opening, the bench replies, and the verdict is behind the paywall.
+    </p>
+
+    <p class="kicker" style="margin-top:1.5rem">Three-year revenue model — deliberately conservative</p>
+    <div class="scroll">
+      <div class="chart" style="min-width:520px">
+        <div class="row">
+          <span class="lab">Year 1</span>
+          <div class="track"><div class="bar b1" style="width:10%"></div></div>
+          <span class="val">PKR 3.9M</span>
+        </div>
+        <div class="row">
+          <span class="lab">Year 2</span>
+          <div class="track"><div class="bar b2" style="width:39%"></div></div>
+          <span class="val">PKR 15M</span>
+        </div>
+        <div class="row">
+          <span class="lab">Year 3</span>
+          <div class="track"><div class="bar b3" style="width:100%"></div></div>
+          <span class="val">PKR 38M</span>
+        </div>
+      </div>
+    </div>
+    <div class="legend">
+      <div><strong>Y1</strong> · 5 Enterprise · 40 Premium · 400 Basic</div>
+      <div><strong>Y2</strong> · 20 Enterprise · 150 Premium · 1,500 Basic</div>
+      <div><strong>Y3</strong> · 45 Enterprise · 400 Premium · 4,000 Basic</div>
+    </div>
+
+    <div class="grid g4" style="margin-top:1.4rem">
+      <div class="tile"><span class="n">91%</span><span class="k">Gross margin on a Premium subscription</span></div>
+      <div class="tile"><span class="n">PKR 480</span><span class="k">Monthly AI cost to serve one Premium student</span></div>
+      <div class="tile"><span class="n">45</span><span class="k">Colleges to reach the Year-3 model — under half the market</span></div>
+      <div class="tile"><span class="n">~$136k</span><span class="k">Year-3 revenue in USD at PKR 280/$</span></div>
+    </div>
+    <p class="note">
+      <strong>Read this as a model, not a forecast.</strong> Only one input is measured — the
+      $0.0095 cost per turn. Pricing, conversion and usage are assumptions, stated here so they
+      can be challenged. Free-tier serving cost is already netted off each year. Replace all of
+      it with pilot data after the first college.
+    </p>
+  </section>
+
+  <!-- ================= INVESTMENT ================= -->
+  <section>
+    <div class="docket"><span>Investment to Date &amp; Ask</span></div>
+    <h2>Built for the price of a laptop.</h2>
+    <div class="grid g2">
+      <div>
+        <p class="kicker">Spent so far</p>
+        <ul>
+          <li><strong>Cash: under PKR 60,000.</strong> OpenAI API credits for development and evaluation runs, plus a domain. No servers bought — the whole stack runs on free tiers today.</li>
+          <li><strong>Effort: the capstone year.</strong> Founding team time, already sunk and already delivered as a working system.</li>
+          <li><strong>Infrastructure: PKR 0.</strong> Supabase, Vercel and Render free tiers carry the current build.</li>
+        </ul>
+      </div>
+      <div>
+        <p class="kicker">To reach the first paying pilot</p>
+        <ul>
+          <li><strong>PKR 250,000 — 6 months runway.</strong> Paid hosting (~PKR 8k/mo), API budget for pilot usage, and the corpus expansion below.</li>
+          <li><strong>Corpus expansion: 53 → ~250 provisions.</strong> The single highest-value spend; it is manual verification work and it is what competitors cannot shortcut.</li>
+          <li><strong>Break-even at one Enterprise licence.</strong> A single college contributes PKR 221k against PKR 96k of annual infrastructure — everything after that funds growth.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DEPLOYMENT ================= -->
+  <section>
+    <div class="docket"><span>Deployment</span></div>
+    <h2>It ships tomorrow, not next semester.</h2>
+    <p class="lede">
+      The system is containerised and the cloud configuration is already written. This is not a
+      prototype that needs rebuilding for production — it is a running product awaiting a URL.
+    </p>
+    <div class="grid g4">
+      <div class="card">
+        <h3>Today · Live</h3>
+        <p>Full stack runs end-to-end. Database hosted, statutes embedded, agents responding.</p>
+      </div>
+      <div class="card">
+        <h3>1 day · Public beta</h3>
+        <p>Frontend to Vercel, services to Render, database on Supabase. Configuration is committed and tested.</p>
+      </div>
+      <div class="card">
+        <h3>2–4 weeks · Pilot</h3>
+        <p>Onboard one law college: faculty accounts, cohort setup, custom cases, usage reporting.</p>
+      </div>
+      <div class="card">
+        <h3>6–8 weeks · Commercial</h3>
+        <p>Payments, tiered access, monitoring, support process. Ready to invoice.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ROADMAP ================= -->
+  <section>
+    <div class="docket"><span>Roadmap &amp; Scope</span></div>
+    <h2>Where this goes next.</h2>
+    <p class="lede">
+      Sequenced by commercial return, not by technical appetite. Urdu and bar-exam prep come
+      first because they widen the Pakistani market; AR/VR deepens a market we must own before
+      we can charge a premium for it.
+    </p>
+
+    <div class="gantt">
+      <div class="grow">
+        <span class="phase-label"><span class="dot" style="background:var(--seal)"></span> Voice latency &lt; 3s</span>
+        <div class="gtrack"><div class="gbar" style="left:0;width:19%;background:var(--seal)"></div></div>
+        <span class="gwk">3 wk</span>
+      </div>
+      <div class="grow">
+        <span class="phase-label"><span class="dot" style="background:var(--seal)"></span> Faculty dashboard</span>
+        <div class="gtrack"><div class="gbar" style="left:0;width:37%;background:var(--seal)"></div></div>
+        <span class="gwk">6 wk</span>
+      </div>
+      <div class="grow">
+        <span class="phase-label"><span class="dot" style="background:var(--primary-2)"></span> Urdu bilingual hearings</span>
+        <div class="gtrack"><div class="gbar" style="left:19%;width:37%;background:var(--primary-2)"></div></div>
+        <span class="gwk">6 wk</span>
+      </div>
+      <div class="grow">
+        <span class="phase-label"><span class="dot" style="background:var(--primary-2)"></span> LAW-GAT bar-exam prep</span>
+        <div class="gtrack"><div class="gbar" style="left:37%;width:50%;background:var(--primary-2)"></div></div>
+        <span class="gwk">8 wk</span>
+      </div>
+      <div class="grow">
+        <span class="phase-label"><span class="dot" style="background:var(--primary)"></span> Mobile application</span>
+        <div class="gtrack"><div class="gbar" style="left:50%;width:37%;background:var(--primary)"></div></div>
+        <span class="gwk">10 wk</span>
+      </div>
+      <div class="grow">
+        <span class="phase-label"><span class="dot" style="background:var(--primary)"></span> Civil, family &amp; tax case library</span>
+        <div class="gtrack"><div class="gbar" style="left:56%;width:44%;background:var(--primary)"></div></div>
+        <span class="gwk">12 wk</span>
+      </div>
+      <div class="grow">
+        <span class="phase-label"><span class="dot" style="background:var(--brass-2)"></span> AR/VR courtroom</span>
+        <div class="gtrack"><div class="gbar" style="left:70%;width:30%;background:var(--brass-2)"></div></div>
+        <span class="gwk">16 wk</span>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div><span class="dot" style="background:var(--seal)"></span> Near term — retention &amp; pilot quality</div>
+      <div><span class="dot" style="background:var(--primary-2)"></span> Market widening — new buyers</div>
+      <div><span class="dot" style="background:var(--primary)"></span> Depth — more practice areas &amp; devices</div>
+      <div><span class="dot" style="background:var(--brass-2)"></span> Differentiation — immersive</div>
+    </div>
+
+    <div class="grid g3" style="margin-top:1.4rem">
+      <div class="card">
+        <h3>Urdu is the unlock</h3>
+        <p>Pakistani courts argue bilingually. No competitor serves this, and it converts the students most underserved by English-only tools.</p>
+      </div>
+      <div class="card">
+        <h3>Bar prep is the volume</h3>
+        <p>Every law graduate must clear LAW-GAT. The same agents, scored against a syllabus, turn a niche practice tool into a mass-market exam product.</p>
+      </div>
+      <div class="card">
+        <h3>AR/VR is the flagship</h3>
+        <p>A headset moot court — standing to address a bench that looks back. The strongest demo asset and the clearest premium tier.</p>
+      </div>
+    </div>
+    <p class="note">
+      Durations are engineering estimates in calendar weeks at current team size, assuming the
+      pilot is running in parallel. Bars overlap where work can proceed concurrently.
+    </p>
+  </section>
+
+  <footer class="foot">
+    <strong>CourtSimulator</strong> · Voice-first moot court for Pakistani law students ·
+    Capstone 2026. Technical metrics are reproducible from the project’s evaluation harness.
+    Market and revenue figures are a stated model — sources to be confirmed before external use.
+  </footer>
+
+</div>

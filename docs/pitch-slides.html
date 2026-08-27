@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CourtSimulator — Pitch Slides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Courier+Prime:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+/* ------------------------------------------------------------------ *
+ * Palette, fonts and courtroom scene are lifted from the running app
+ * (artifacts/adalat-ai/src/index.css) on purpose: the deck should look
+ * like the product, not like a deck about the product.
+ *
+ * Audience note: this deck is presented to a non-technical panel, so
+ * no slide names a library, a container or a file format. The plain
+ * sentence is the requirement, not a simplification of one.
+ * ------------------------------------------------------------------ */
+:root{
+  --parchment:#eff1ea; --paper:#fdfdfa; --ink:#161e27; --ink-2:#535e6e;
+  --rule:#d3d5c9; --violet:#4f2886; --violet-wash:#efe9f7; --violet-line:#d7c9ec;
+  --stamp:#c5321b; --stamp-wash:#fbeeeb; --stamp-line:#f0cec6;
+  --seal:#246b4f; --seal-wash:#e9f3ee; --seal-line:#bcdccc;
+  --gold:#c68910; --gold-wash:#f9f1de; --gold-line:#e8d09a;
+  --sans:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --serif:'Newsreader',Georgia,'Palatino Linotype',serif;
+  --mono:'Courier Prime','Courier New',ui-monospace,monospace;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:#c9ccc0;}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;}
+
+.slide{
+  position:relative; width:1280px; height:720px; overflow:hidden;
+  background:var(--parchment); margin:24px auto; page-break-after:always;
+  box-shadow:0 18px 40px rgba(0,0,0,.28);
+}
+.slide:last-child{page-break-after:auto;}
+
+@page{ size:1280px 720px; margin:0; }
+@media print{
+  html,body{background:#fff;}
+  .slide{margin:0;box-shadow:none;}
+}
+
+/* --- shared furniture --------------------------------------------- */
+.eyebrow{font-family:var(--mono); font-size:13px; letter-spacing:.28em;
+  text-transform:uppercase; color:var(--ink-2);}
+.masthead{position:absolute; top:0; left:0; right:0; height:62px; padding:0 54px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--rule);}
+.masthead .brand{font-family:var(--serif); font-size:22px; letter-spacing:-.01em;}
+.masthead .brand span{font-family:var(--mono); font-size:10.5px; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--ink-2); margin-left:14px;}
+.masthead .page{font-family:var(--mono); font-size:10.5px; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--ink-2);}
+.slide-title{font-family:var(--serif); font-weight:500; font-size:40px; line-height:1.06;
+  letter-spacing:-.01em; margin:0;}
+.slide-title em{font-style:italic; color:var(--violet);}
+.footline{position:absolute; left:54px; right:54px; bottom:20px; display:flex;
+  justify-content:space-between; font-family:var(--mono); font-size:10px;
+  letter-spacing:.2em; text-transform:uppercase; color:#8b9285;
+  border-top:1px solid var(--rule); padding-top:9px;}
+
+.chip{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono);
+  font-size:11.5px; letter-spacing:.12em; text-transform:uppercase;
+  padding:7px 13px; border-radius:3px; border:1px solid var(--rule);
+  background:var(--paper); color:var(--ink-2); white-space:nowrap;}
+.chip b{color:var(--ink); font-weight:700; letter-spacing:.06em; text-transform:none;}
+.chip.gold{background:var(--gold-wash); border-color:var(--gold-line); color:#7d5807;}
+.chip.gold b{color:#6b4b05;}
+.chip.seal{background:var(--seal-wash); border-color:var(--seal-line); color:#1c5540;}
+.chip.seal b{color:#123a2b;}
+.chip.stamp{background:var(--stamp-wash); border-color:var(--stamp-line); color:#9d2814;}
+.chip.stamp b{color:#7a1f10;}
+.chip.violet{background:var(--violet-wash); border-color:var(--violet-line); color:#472377;}
+.chip.violet b{color:#33195a;}
+.scene{display:block; width:100%; height:100%;}
+
+/* ================= SLIDE 1 ================= */
+.s1{display:flex; flex-direction:column;}
+.s1 .halo{position:absolute; left:50%; top:-120px; transform:translateX(-50%);
+  width:760px; height:760px; border-radius:50%;
+  background:radial-gradient(circle,#e6ddf3 0%,#eae7ee 45%,rgba(239,241,234,0) 70%);}
+.s1 .top{position:relative; height:336px; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center; padding:0 90px;}
+.s1 h1{font-family:var(--serif); font-weight:400; font-size:96px; line-height:.96;
+  letter-spacing:-.035em; margin:14px 0 0;}
+.s1 .rule{width:126px; height:8px; background:var(--gold); margin:20px 0 18px;}
+.s1 .sub{font-family:var(--serif); font-size:24px; line-height:1.4; color:#25313f;
+  max-width:860px; margin:0;}
+.s1 .chips{position:relative; display:flex; gap:12px; justify-content:center; margin-top:20px;}
+.s1 .band{position:relative; height:384px; overflow:hidden; border-top:1px solid #2a1a0d;}
+.s1 .tag{position:absolute; top:20px; font-family:var(--mono); font-size:10.5px;
+  letter-spacing:.2em; text-transform:uppercase; padding:6px 12px; border-radius:2px;}
+.s1 .tag.l{left:22px; background:rgba(20,12,6,.82); color:#f0e3cb;}
+.s1 .tag.r{right:22px; background:rgba(198,137,16,.9); color:#221403; font-weight:700;}
+
+/* ================= SLIDE 2 ================= */
+.s2 .define{position:absolute; top:62px; left:0; right:0; height:56px;
+  background:var(--paper); border-bottom:1px solid var(--rule);
+  display:flex; align-items:center; gap:16px; padding:0 54px;}
+.s2 .define .k{font-family:var(--mono); font-size:11px; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--violet); white-space:nowrap;}
+.s2 .define .v{font-family:var(--serif); font-size:19px; color:#2b3644;}
+.s2 .body{position:absolute; top:118px; left:0; right:0; bottom:0;
+  display:grid; grid-template-columns:1fr 1fr;}
+.col{padding:26px 46px 0;}
+.col.problem{background:linear-gradient(180deg,#f6ecea 0%,#f4eeec 100%); border-right:1px solid var(--rule);}
+.col.solution{background:linear-gradient(180deg,#eaf2ee 0%,#edf1ee 100%);}
+.col h2{font-family:var(--mono); font-size:13px; letter-spacing:.3em; text-transform:uppercase;
+  margin:0 0 12px; display:flex; align-items:center; gap:12px;}
+.col.problem h2{color:#9d2814;} .col.solution h2{color:#1c5540;}
+.col h2::after{content:""; flex:1; height:1px; background:currentColor; opacity:.28;}
+.col .lede{font-family:var(--serif); font-size:26px; line-height:1.2; margin:0 0 16px;
+  letter-spacing:-.01em;}
+.col .art{height:180px; margin:0 0 20px;}
+.pt{display:flex; gap:13px; margin-bottom:16px;}
+.pt .mark{flex:0 0 25px; height:25px; border-radius:50%; display:flex; align-items:center;
+  justify-content:center; font-family:var(--mono); font-size:12px; font-weight:700; margin-top:1px;}
+.problem .pt .mark{background:#f3d9d4; color:#9d2814;}
+.solution .pt .mark{background:#cfe6da; color:#1c5540;}
+.pt .txt{font-size:15.5px; line-height:1.52; color:#2b3644;}
+.pt .txt b{font-weight:600; color:var(--ink);}
+
+/* ================= SLIDE 3 ================= */
+.s3 .head{position:absolute; top:62px; left:54px; right:54px; height:84px;
+  display:flex; align-items:center; justify-content:space-between; gap:24px;}
+.s3 .head .sub{font-size:15px; color:var(--ink-2); margin-top:7px;}
+.f3{position:absolute; top:158px; left:54px; right:54px; height:470px;}
+.card{position:absolute; background:var(--paper); border:1px solid var(--rule);
+  border-radius:8px; box-shadow:0 3px 8px rgba(22,30,39,.06); overflow:hidden;}
+.card .hd{padding:14px 16px 0;}
+.step{display:flex; align-items:center; gap:9px; margin-bottom:7px;}
+.num{width:22px; height:22px; border-radius:50%; background:var(--violet); color:#fff;
+  font-family:var(--mono); font-size:11px; font-weight:700; display:flex;
+  align-items:center; justify-content:center;}
+.ttl{font-family:var(--serif); font-size:21px; letter-spacing:-.01em; line-height:1;}
+.card .bd{padding:0 16px 14px;}
+.say{font-family:var(--serif); font-style:italic; font-size:15px; line-height:1.36; color:#2b3644;}
+.who{font-family:var(--mono); font-size:9.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink-2); margin-bottom:4px;}
+.reply{border-left:3px solid; padding:9px 0 9px 12px; margin-bottom:11px;}
+.reply.r1{border-color:var(--stamp); background:#fdf4f2;}
+.reply.r2{border-color:#3a2517; background:#f5f0e8;}
+.reply.r3{border-color:var(--gold); background:#fcf7ec;}
+.reply.r1 .who{color:#9d2814;} .reply.r2 .who{color:#5a3b1e;} .reply.r3 .who{color:#7d5807;}
+.loop{position:absolute; left:0; top:268px; width:100%; height:64px;}
+.loop-lbl{position:absolute; top:292px; left:50%; transform:translateX(-50%);
+  font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:#5b6474; background:var(--parchment); padding:2px 12px;}
+.endstrip{position:absolute; left:0; top:356px; width:100%; height:110px;
+  background:var(--violet-wash); border:1px solid var(--violet-line); border-radius:8px;
+  padding:14px 20px; display:flex; align-items:center; gap:24px;}
+.endstrip .chip{font-size:10.5px; padding:6px 10px; letter-spacing:.1em;}
+
+/* ================= SLIDE 4 - COSTS ================= */
+.s4c .head{position:absolute; top:62px; left:54px; right:54px; height:80px;}
+.s4c .head .sub{font-size:15.5px; color:var(--ink-2); margin-top:8px;}
+.costcards{position:absolute; top:152px; left:54px; right:54px; height:184px;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:26px;}
+.ccard{background:var(--paper); border:1px solid var(--rule); border-radius:8px;
+  padding:16px 20px 14px; display:flex; flex-direction:column;}
+.ccard .k{font-family:var(--mono); font-size:10.5px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ink-2);}
+.ccard .n{font-family:var(--serif); font-size:56px; line-height:1; margin:10px 0 8px;
+  letter-spacing:-.025em; color:var(--seal);}
+.ccard.fixed .n{color:var(--violet);}
+.ccard .d{font-size:12.5px; line-height:1.45; color:#4a5568;}
+.ccard .split{margin-top:auto; padding-top:10px; border-top:1px solid var(--rule);
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.08em; color:#6d7686;}
+.econ{position:absolute; top:358px; left:54px; right:54px; height:274px;
+  background:var(--violet-wash); border:1px solid var(--violet-line); border-radius:8px;
+  padding:20px 24px; display:grid; grid-template-columns:1fr 316px; gap:28px;}
+.econ h3{font-family:var(--mono); font-size:11.5px; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--violet); margin:0 0 10px;}
+.econ .scen{font-family:var(--serif); font-size:21px; line-height:1.25; color:#2b3644;
+  letter-spacing:-.01em;}
+.bar{display:flex; height:46px; border-radius:5px; overflow:hidden; margin:16px 0 12px;
+  border:1px solid rgba(0,0,0,.07);}
+.bar i{display:flex; align-items:center; padding-left:13px; font-family:var(--mono);
+  font-size:11px; color:#fff; font-style:normal; white-space:nowrap;}
+.legend{display:flex; gap:22px; font-size:12.5px; color:#4a5568;}
+.legend b{font-weight:600; color:var(--ink);}
+.legend .dot{display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:7px;}
+.big{background:var(--paper); border:1px solid var(--violet-line); border-radius:8px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:14px;}
+.big .n{font-family:var(--serif); font-size:76px; line-height:.94; color:var(--violet);
+  letter-spacing:-.03em;}
+.big .c{font-size:13.5px; line-height:1.4; color:#4a5568; margin-top:10px;}
+.big .t{font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-2); margin-top:12px; padding-top:10px; border-top:1px solid var(--rule);}
+
+/* ================= SLIDE 5 ================= */
+.s4 .verdict{position:absolute; top:62px; left:0; right:0; height:162px;
+  background:linear-gradient(180deg,#f1ece2,#eff1ea);
+  padding:22px 54px 0; display:flex; align-items:center; gap:32px;}
+.s4 .verdict .slide-title{font-size:33px;}
+.stamp-yes{font-family:var(--serif); font-size:66px; line-height:.9; color:var(--seal);
+  letter-spacing:-.03em; border:4px solid var(--seal); border-radius:8px;
+  padding:10px 24px 14px; transform:rotate(-3deg); white-space:nowrap;
+  box-shadow:0 0 0 2px #eff1ea inset;}
+.s4 .week{position:absolute; top:224px; left:0; right:0; height:62px;
+  background:var(--paper); border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
+  display:flex; align-items:center; justify-content:center; gap:14px; padding:0 54px;}
+.wk{display:flex; align-items:center; gap:11px; font-size:13.5px; color:#3a4553;}
+.wk .d{font-family:var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+  background:var(--violet-wash); border:1px solid var(--violet-line); color:#472377;
+  padding:5px 9px; border-radius:3px; white-space:nowrap;}
+.wk .arw{color:#b6bcae; margin:0 4px;}
+.s4 .cols{position:absolute; top:300px; left:54px; right:54px; height:210px;
+  display:grid; grid-template-columns:1fr 1fr; gap:36px;}
+.panel h3{font-family:var(--mono); font-size:12px; letter-spacing:.26em; text-transform:uppercase;
+  color:var(--ink-2); margin:0 0 13px; padding-bottom:8px; border-bottom:1px solid var(--rule);}
+.li{display:flex; gap:11px; font-size:14.5px; line-height:1.46; margin-bottom:11px; color:#2b3644;}
+.li .tick{flex:0 0 15px; color:var(--seal); font-weight:700;}
+.li b{font-weight:600; color:var(--ink);}
+.money{display:flex; gap:10px; margin-top:2px;}
+.money .m{flex:1; background:var(--paper); border:1px solid var(--rule); border-radius:5px;
+  padding:9px 12px;}
+.money .n{font-family:var(--serif); font-size:23px; color:var(--seal); line-height:1;}
+.money .c{font-size:11.5px; color:#5b6474; margin-top:5px; line-height:1.3;}
+.s4 .future{position:absolute; left:54px; right:54px; top:528px; height:130px;}
+.future h3{font-family:var(--mono); font-size:12px; letter-spacing:.26em; text-transform:uppercase;
+  color:var(--violet); margin:0 0 12px; display:flex; align-items:center; gap:12px;}
+.future h3::after{content:""; flex:1; height:1px; background:var(--violet-line);}
+.fcards{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+.fcard{background:var(--violet-wash); border:1px solid var(--violet-line); border-radius:6px;
+  padding:12px 14px; display:flex; gap:12px; align-items:flex-start;}
+.fcard .ic{flex:0 0 38px; height:38px; border-radius:5px; background:#fff;
+  border:1px solid var(--violet-line); display:flex; align-items:center; justify-content:center;}
+.fcard .t{font-family:var(--serif); font-size:17px; line-height:1.1; letter-spacing:-.01em;}
+.fcard .d{font-size:12px; line-height:1.42; color:#4a5568; margin-top:5px;}
+</style>
+</head>
+<body>
+
+<!-- ================= shared artwork ================= -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#4b3020"/><stop offset="1" stop-color="#25170d"/>
+  </linearGradient>
+  <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#5d3c22"/><stop offset="1" stop-color="#2e1d10"/>
+  </linearGradient>
+  <linearGradient id="deskG" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#8a5c33"/><stop offset="1" stop-color="#4d3018"/>
+  </linearGradient>
+  <radialGradient id="spot" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="#f0c979" stop-opacity=".55"/>
+    <stop offset="55%" stop-color="#d9a441" stop-opacity=".18"/>
+    <stop offset="100%" stop-color="#d9a441" stop-opacity="0"/>
+  </radialGradient>
+
+  <g id="scales">
+    <g fill="none" stroke="#d9a441" stroke-width="2.4" stroke-linecap="round">
+      <path d="M0 -20 V16"/><path d="M-16 16 H16"/><path d="M-19 -12 H19"/>
+      <path d="M-19 -12 L-25 0"/><path d="M-19 -12 L-13 0"/><path d="M-25 0 A6 6 0 0 0 -13 0"/>
+      <path d="M19 -12 L13 0"/><path d="M19 -12 L25 0"/><path d="M13 0 A6 6 0 0 0 25 0"/>
+    </g>
+    <circle cx="0" cy="-20" r="3" fill="#d9a441"/>
+  </g>
+
+  <symbol id="courtroom" viewBox="0 0 1000 360">
+    <rect width="1000" height="360" fill="url(#wall)"/>
+    <g stroke="#000" stroke-opacity=".22" stroke-width="1.4">
+      <path d="M62 0V230M125 0V230M187 0V230M250 0V230M312 0V230M375 0V230M437 0V230M562 0V230M625 0V230M687 0V230M750 0V230M812 0V230M875 0V230M937 0V230"/>
+    </g>
+    <ellipse cx="500" cy="150" rx="300" ry="160" fill="url(#spot)"/>
+    <circle cx="500" cy="82" r="28" fill="none" stroke="#d9a441" stroke-opacity=".85" stroke-width="1.7"/>
+    <g transform="translate(500,84) scale(.62)"><use href="#scales"/></g>
+
+    <rect y="228" width="1000" height="132" fill="url(#floor)"/>
+    <g stroke="#c69a5f" stroke-opacity=".16" stroke-width="1">
+      <path d="M500 232 L100 360M500 232 L300 360M500 232 L700 360M500 232 L900 360M0 268H1000M0 300H1000"/>
+    </g>
+
+    <rect x="466" y="112" width="68" height="86" rx="14" fill="#1d1208"/>
+    <path d="M480 196c0-18 9-31 20-31s20 13 20 31z" fill="#2c2038"/>
+    <circle cx="500" cy="158" r="15" fill="#e9ddc8"/>
+    <path d="M488 172h24l-4 12h-16z" fill="#f4efe4"/>
+    <rect x="356" y="186" width="288" height="34" rx="3" fill="url(#deskG)"/>
+    <rect x="356" y="186" width="288" height="5" fill="#a97544" fill-opacity=".65"/>
+    <rect x="456" y="192" width="88" height="15" rx="2" fill="#c68910"/>
+    <text x="500" y="203" text-anchor="middle" font-family="Courier Prime,monospace" font-size="8.5" font-weight="700" letter-spacing="1" fill="#221403">THE BENCH</text>
+    <ellipse cx="584" cy="184" rx="10" ry="4" fill="#2a1a0d"/><rect x="580" y="176" width="9" height="9" rx="2" fill="#2a1a0d"/>
+
+    <rect x="282" y="184" width="86" height="36" rx="3" fill="#6d4626"/>
+    <rect x="282" y="184" width="86" height="4" fill="#a97544" fill-opacity=".6"/>
+    <rect x="291" y="192" width="68" height="14" rx="2" fill="#c68910"/>
+    <text x="325" y="203" text-anchor="middle" font-family="Courier Prime,monospace" font-size="8" font-weight="700" letter-spacing=".8" fill="#221403">WITNESS</text>
+
+    <g>
+      <circle cx="172" cy="272" r="17" fill="#e9ddc8"/>
+      <path d="M148 320c0-16 11-27 24-27s24 11 24 27z" fill="#1d1a24"/>
+      <rect x="94" y="308" width="156" height="34" rx="3" fill="url(#deskG)"/>
+      <rect x="94" y="308" width="156" height="5" fill="#a97544" fill-opacity=".6"/>
+      <rect x="116" y="315" width="112" height="15" rx="2" fill="#c68910"/>
+      <text x="172" y="326" text-anchor="middle" font-family="Courier Prime,monospace" font-size="8" font-weight="700" letter-spacing=".8" fill="#221403">PETITIONER · YOU</text>
+      <rect x="238" y="300" width="2" height="16" fill="#3d2a17"/><circle cx="239" cy="298" r="4" fill="#3d2a17"/>
+    </g>
+    <g>
+      <circle cx="828" cy="272" r="17" fill="#e9ddc8"/>
+      <path d="M804 320c0-16 11-27 24-27s24 11 24 27z" fill="#1d1a24"/>
+      <rect x="750" y="308" width="156" height="34" rx="3" fill="url(#deskG)"/>
+      <rect x="750" y="308" width="156" height="5" fill="#a97544" fill-opacity=".6"/>
+      <rect x="780" y="315" width="96" height="15" rx="2" fill="#c68910"/>
+      <text x="828" y="326" text-anchor="middle" font-family="Courier Prime,monospace" font-size="8" font-weight="700" letter-spacing=".8" fill="#221403">RESPONDENT</text>
+      <rect x="894" y="300" width="2" height="16" fill="#3d2a17"/><circle cx="895" cy="298" r="4" fill="#3d2a17"/>
+    </g>
+  </symbol>
+</defs>
+</svg>
+
+<!-- ==================== SLIDE 1 — TITLE ==================== -->
+<section class="slide s1">
+  <div class="halo"></div>
+  <div class="top">
+    <div class="eyebrow">Capstone 2026 &nbsp;·&nbsp; Voice-first moot court &nbsp;·&nbsp; Pakistan superior judiciary</div>
+    <h1>CourtSimulator</h1>
+    <div class="rule"></div>
+    <p class="sub">A law student argues out loud — and a judge, an opposing advocate and a
+      witness argue back in real time, every citation drawn from the Pakistani statute book.</p>
+    <div class="chips">
+      <span class="chip violet"><b>1</b> human in the room</span>
+      <span class="chip seal"><b>3</b> AI roles: judge, counsel, witness</span>
+      <span class="chip gold"><b>24/7</b> practice, from anywhere</span>
+    </div>
+  </div>
+  <div class="band">
+    <svg class="scene" viewBox="0 52 1000 300" preserveAspectRatio="xMidYMid slice"><use href="#courtroom" width="1000" height="360"/></svg>
+    <div class="tag l">Examination-in-chief</div>
+    <div class="tag r">The bench is speaking</div>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 2 — PROBLEM / SOLUTION ==================== -->
+<section class="slide s2">
+  <div class="masthead">
+    <div class="brand">CourtSimulator<span>Problem &amp; solution</span></div>
+    <div class="page">02 / 05</div>
+  </div>
+
+  <div class="define">
+    <span class="k">Moot court</span>
+    <span class="v">Court practice — law students argue a mock case in a full courtroom, before a judge, against an opposing counsel, questioning a witness.</span>
+  </div>
+
+  <div class="body">
+    <div class="col problem">
+      <h2>The problem</h2>
+      <p class="lede">A moot court needs a whole courtroom — and a courtroom needs people.</p>
+
+      <svg class="art" viewBox="0 0 548 180" preserveAspectRatio="none">
+        <!-- you: present -->
+        <g>
+          <circle cx="70" cy="46" r="19" fill="#e9ddc8" stroke="#b9b1a2"/>
+          <path d="M44 106c0-19 12-32 26-32s26 13 26 32z" fill="#4f2886"/>
+          <text x="70" y="126" text-anchor="middle" font-family="Courier Prime,monospace" font-size="9" font-weight="700" fill="#2b3644" letter-spacing=".5">YOU</text>
+          <text x="70" y="138" text-anchor="middle" font-family="Archivo,sans-serif" font-size="9" fill="#7b8494">law student</text>
+        </g>
+        <!-- three people who have to be found, every time -->
+        <g stroke="#b0a89e" stroke-width="1.6" stroke-dasharray="4 4" fill="none">
+          <circle cx="206" cy="46" r="19"/><path d="M180 106c0-19 12-32 26-32s26 13 26 32z"/>
+          <circle cx="342" cy="46" r="19"/><path d="M316 106c0-19 12-32 26-32s26 13 26 32z"/>
+          <circle cx="478" cy="46" r="19"/><path d="M452 106c0-19 12-32 26-32s26 13 26 32z"/>
+        </g>
+        <g font-family="Newsreader,serif" font-size="20" fill="#b0a89e" text-anchor="middle">
+          <text x="206" y="53">?</text><text x="342" y="53">?</text><text x="478" y="53">?</text>
+        </g>
+        <g font-family="Courier Prime,monospace" font-size="9" font-weight="700" fill="#8d867d" text-anchor="middle" letter-spacing=".5">
+          <text x="206" y="126">JUDGE</text>
+          <text x="342" y="126">OPPOSING</text><text x="342" y="137">COUNSEL</text>
+          <text x="478" y="126">WITNESS</text>
+        </g>
+        <rect x="0" y="152" width="548" height="26" rx="4" fill="#f3d9d4"/>
+        <text x="274" y="169" text-anchor="middle" font-family="Courier Prime,monospace" font-size="10" font-weight="700" fill="#9d2814" letter-spacing=".14em">THREE PEOPLE TO ARRANGE, EVERY SINGLE TIME</text>
+      </svg>
+
+      <div class="pt"><div class="mark">1</div><div class="txt">
+        To hold one, you need a <b>proper courtroom setup</b> — a presiding judge, an opposing counsel
+        and a witness.</div></div>
+      <div class="pt"><div class="mark">2</div><div class="txt">
+        Arranging all of them takes <b>a great deal of time and effort</b>.</div></div>
+      <div class="pt"><div class="mark">3</div><div class="txt">
+        So a moot court is held only <b>once or twice a year</b>.</div></div>
+      <div class="pt"><div class="mark">4</div><div class="txt">
+        Most students <b>never get a turn</b> — and never hear how their argument actually held up.</div></div>
+    </div>
+
+    <div class="col solution">
+      <h2>Our solution</h2>
+      <p class="lede">CourtSimulator needs one person in the room: the student.</p>
+
+      <svg class="art" viewBox="0 0 548 180" preserveAspectRatio="none">
+        <g>
+          <circle cx="70" cy="46" r="19" fill="#e9ddc8" stroke="#b9b1a2"/>
+          <path d="M44 106c0-19 12-32 26-32s26 13 26 32z" fill="#4f2886"/>
+          <text x="70" y="126" text-anchor="middle" font-family="Courier Prime,monospace" font-size="9" font-weight="700" fill="#2b3644" letter-spacing=".5">YOU</text>
+          <text x="70" y="138" text-anchor="middle" font-family="Archivo,sans-serif" font-size="9" fill="#7b8494">law student</text>
+        </g>
+        <g>
+          <circle cx="206" cy="46" r="19" fill="#e6dcf4" stroke="#4f2886" stroke-width="1.4"/>
+          <path d="M180 106c0-19 12-32 26-32s26 13 26 32z" fill="#4f2886" fill-opacity=".82"/>
+          <circle cx="342" cy="46" r="19" fill="#e6dcf4" stroke="#4f2886" stroke-width="1.4"/>
+          <path d="M316 106c0-19 12-32 26-32s26 13 26 32z" fill="#4f2886" fill-opacity=".82"/>
+          <circle cx="478" cy="46" r="19" fill="#e6dcf4" stroke="#4f2886" stroke-width="1.4"/>
+          <path d="M452 106c0-19 12-32 26-32s26 13 26 32z" fill="#4f2886" fill-opacity=".82"/>
+        </g>
+        <g font-family="Courier Prime,monospace" font-size="8" font-weight="700" fill="#fff">
+          <rect x="218" y="24" width="21" height="13" rx="6.5" fill="#4f2886"/><text x="228.5" y="34" text-anchor="middle">AI</text>
+          <rect x="354" y="24" width="21" height="13" rx="6.5" fill="#4f2886"/><text x="364.5" y="34" text-anchor="middle">AI</text>
+          <rect x="490" y="24" width="21" height="13" rx="6.5" fill="#4f2886"/><text x="500.5" y="34" text-anchor="middle">AI</text>
+        </g>
+        <g font-family="Courier Prime,monospace" font-size="9" font-weight="700" fill="#3f4a58" text-anchor="middle" letter-spacing=".5">
+          <text x="206" y="126">JUDGE</text>
+          <text x="342" y="126">OPPOSING</text><text x="342" y="137">COUNSEL</text>
+          <text x="478" y="126">WITNESS</text>
+        </g>
+        <rect x="0" y="152" width="548" height="26" rx="4" fill="#cfe6da"/>
+        <text x="274" y="169" text-anchor="middle" font-family="Courier Prime,monospace" font-size="10" font-weight="700" fill="#1c5540" letter-spacing=".14em">NOBODY TO ARRANGE — THE COURT IS ALWAYS SITTING</text>
+      </svg>
+
+      <div class="pt"><div class="mark">1</div><div class="txt">
+        A moot court simulator that needs <b>one human — the law student</b>. AI agents play
+        every other role.</div></div>
+      <div class="pt"><div class="mark">2</div><div class="txt">
+        One AI acts as the <b>judge</b>, one as the <b>opposing counsel</b>, one as the <b>witness</b>.</div></div>
+      <div class="pt"><div class="mark">3</div><div class="txt">
+        The student can practise <b>whenever they want, 24/7, from wherever they are</b>.</div></div>
+      <div class="pt"><div class="mark">4</div><div class="txt">
+        When the case ends, they get a <b>proper evaluation and feedback</b> — how well they
+        defended it, and where they need to improve.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 3 — HOW IT WORKS ==================== -->
+<section class="slide s3">
+  <div class="masthead">
+    <div class="brand">CourtSimulator<span>How a hearing runs</span></div>
+    <div class="page">03 / 05</div>
+  </div>
+
+  <div class="head">
+    <div>
+      <h2 class="slide-title">You argue. The court <em>answers back</em>.</h2>
+      <div class="sub">A hearing is a conversation — the student speaks, the court responds, and it repeats until the case closes.</div>
+    </div>
+    <span class="chip violet"><b>Live</b> spoken exchange</span>
+  </div>
+
+  <div class="f3">
+    <svg viewBox="0 0 1172 470" preserveAspectRatio="none"
+         style="position:absolute;inset:0;width:100%;height:100%;overflow:visible">
+      <defs>
+        <marker id="fw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="#7a8391"/>
+        </marker>
+      </defs>
+      <g fill="none" stroke="#7a8391" stroke-width="2">
+        <path d="M256 134 H290" marker-end="url(#fw)"/>
+        <path d="M826 134 H860" marker-end="url(#fw)"/>
+      </g>
+    </svg>
+    <svg class="loop" viewBox="0 0 1172 64" preserveAspectRatio="none" style="overflow:visible">
+      <defs>
+        <marker id="lp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="#8b93a1"/>
+        </marker>
+      </defs>
+      <path d="M1021 0 V34 H125 V2" fill="none" stroke="#8b93a1" stroke-width="1.8"
+            stroke-dasharray="7 5" marker-end="url(#lp)"/>
+    </svg>
+    <div class="loop-lbl">You hear every reply spoken aloud — then you answer back</div>
+
+    <!-- 1 : the student speaks -->
+    <div class="card" style="left:0;top:0;width:250px;height:268px">
+      <div class="hd">
+        <div class="step"><div class="num">1</div><div class="ttl">You speak</div></div>
+      </div>
+      <div class="bd">
+        <svg viewBox="0 0 218 88" style="width:100%;height:88px">
+          <circle cx="42" cy="34" r="20" fill="#e9ddc8" stroke="#b9b1a2"/>
+          <path d="M15 84c0-19 12-32 27-32s27 13 27 32z" fill="#4f2886"/>
+          <g stroke="#4f2886" stroke-width="3" stroke-linecap="round">
+            <path d="M86 30V54"/><path d="M99 20V64"/><path d="M112 34V50"/><path d="M125 26V58"/><path d="M138 38V46"/>
+          </g>
+          <rect x="156" y="26" width="18" height="30" rx="9" fill="none" stroke="#4f2886" stroke-width="2.4"/>
+          <path d="M150 48a15 15 0 0 0 30 0" fill="none" stroke="#4f2886" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M165 63v10" stroke="#4f2886" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+        <div class="say" style="margin-top:8px">“Ms. Arif, you saw the notice served on 4 March, did you not?”</div>
+      </div>
+    </div>
+
+    <!-- 2 : the courtroom -->
+    <div class="card" style="left:300px;top:0;width:520px;height:268px;border-color:#3a2517">
+      <div style="height:158px;background:#25170d">
+        <svg class="scene" viewBox="0 48 1000 306" preserveAspectRatio="xMidYMid slice"><use href="#courtroom" width="1000" height="360"/></svg>
+      </div>
+      <div style="padding:11px 16px">
+        <div class="step" style="margin-bottom:5px"><div class="num">2</div><div class="ttl">The court hears you</div></div>
+        <div style="font-size:13.5px;color:#4a5568;line-height:1.4">
+          Every seat except yours is filled by an AI agent — the bench, the opposing counsel, the witness.
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 : the court answers -->
+    <div class="card" style="left:870px;top:0;width:302px;height:268px">
+      <div class="hd">
+        <div class="step"><div class="num">3</div><div class="ttl">The court answers</div></div>
+      </div>
+      <div class="bd">
+        <div class="reply r1">
+          <div class="who">Opposing counsel objects</div>
+          <div class="say">“Objection — that is a leading question.”</div>
+        </div>
+        <div class="reply r2">
+          <div class="who">The judge checks the law, then rules</div>
+          <div class="say">“Sustained. Rephrase the question.”</div>
+        </div>
+        <div class="reply r3">
+          <div class="who">Or the witness answers</div>
+          <div class="say">“I did, sir. It was pinned to the gate.”</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 : the evaluation -->
+    <div class="endstrip">
+      <div class="step" style="flex:0 0 auto;margin:0">
+        <div class="num">4</div>
+        <div>
+          <div class="ttl">When the case closes</div>
+          <div style="font-size:13px;color:#4a5568;margin-top:5px;max-width:420px">
+            The student is scored and given written feedback — what they argued well, and where they need to improve.
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex:1;justify-content:flex-end">
+        <span class="chip">Legal reasoning</span>
+        <span class="chip">Persuasiveness</span>
+        <span class="chip">Court procedure</span>
+        <span class="chip">Command of the facts</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footline">
+    <span>Every section the court quotes is checked against the printed law before you hear it</span>
+    <span>CourtSimulator · 2026</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 4 — WHAT IT COSTS ==================== -->
+<section class="slide s4c">
+  <div class="masthead">
+    <div class="brand">CourtSimulator<span>What it costs to run</span></div>
+    <div class="page">04 / 05</div>
+  </div>
+
+  <div class="head">
+    <h2 class="slide-title">Two costs. Both <em>small</em>.</h2>
+    <div class="sub">A few cents each time a student practises, and a flat monthly rent to keep the doors open.</div>
+  </div>
+
+  <div class="costcards">
+    <div class="ccard">
+      <div class="k">Writing a new case</div>
+      <div class="n">2¢</div>
+      <div class="d">The AI drafts the brief, the facts and the witnesses — once. Every student
+        after that argues the same case for nothing.</div>
+      <div class="split">Paid once per case · not once per student</div>
+    </div>
+    <div class="ccard">
+      <div class="k">One practice hearing</div>
+      <div class="n">30¢</div>
+      <div class="d">A full hearing, opening to judgment — roughly twenty spoken exchanges with
+        the bench, the opposing counsel and the witness.</div>
+      <div class="split">19¢ thinking &nbsp;·&nbsp; 11¢ listening and speaking</div>
+    </div>
+    <div class="ccard fixed">
+      <div class="k">Keeping it online</div>
+      <div class="n">$40<span style="font-size:22px;letter-spacing:0"> /month</span></div>
+      <div class="d">The website, the two servers and the database — the standing rent, whether
+        one student uses it or three hundred do.</div>
+      <div class="split">Flat · the only recurring bill</div>
+    </div>
+  </div>
+
+  <div class="econ">
+    <div>
+      <h3>So what does a semester actually cost?</h3>
+      <div class="scen">A class of <b>100 students</b>, each arguing <b>one full hearing every week</b>,
+        for a <b>16-week semester</b> — 1,600 hearings.</div>
+      <div class="bar">
+        <i style="width:75%;background:#246b4f">1,600 hearings — $480</i>
+        <i style="width:24.94%;background:#4f2886">4 months online — $160</i>
+        <i style="width:0.6%;background:#c68910;min-width:5px;padding:0"></i>
+      </div>
+      <div class="legend">
+        <span><span class="dot" style="background:#246b4f"></span><b>Practice</b> $480</span>
+        <span><span class="dot" style="background:#4f2886"></span><b>Hosting</b> $160</span>
+        <span><span class="dot" style="background:#c68910"></span><b>20 new cases</b> 40¢ — too small to see on the bar</span>
+      </div>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--violet-line);
+                  font-family:var(--serif);font-size:19px;line-height:1.32;color:#3b2b56">
+        Today: one moot round a year, and most students never get into it.<br>
+        At this price: <b style="color:var(--violet)">sixteen hearings each</b>.
+      </div>
+    </div>
+    <div class="big">
+      <div class="n">$6.40</div>
+      <div class="c">per student, for a whole semester<br>of unlimited practice</div>
+      <div class="t">Total ≈ $640 for the class</div>
+    </div>
+  </div>
+
+  <div class="footline">
+    <span>Hearing cost metered by the project's own harness · hosting at published entry rates, checked August 2026</span>
+    <span>CourtSimulator · 2026</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 4 — DEPLOYABLE + FUTURE ==================== -->
+<section class="slide s4">
+  <div class="masthead">
+    <div class="brand">CourtSimulator<span>Can it go live?</span></div>
+    <div class="page">05 / 05</div>
+  </div>
+
+  <div class="verdict">
+    <div class="stamp-yes">YES</div>
+    <div style="flex:1">
+      <div class="eyebrow">Is it ready to deploy?</div>
+      <h2 class="slide-title" style="margin:9px 0 9px">Open to students in <em>one week</em>, once it is funded.</h2>
+      <p style="margin:0;font-size:14.5px;line-height:1.5;color:#3a4553;max-width:900px">
+        The system is finished and working today. What it still needs is not more building —
+        it is a place on the internet to live, and credit to run on.</p>
+    </div>
+  </div>
+
+  <div class="week">
+    <div class="wk"><span class="d">Days 1–2</span> set up the accounts and pay for hosting</div>
+    <span class="wk arw">→</span>
+    <div class="wk"><span class="d">Days 3–5</span> put it online and test it</div>
+    <span class="wk arw">→</span>
+    <div class="wk"><span class="d">Days 6–7</span> trial run with a class, then open it up</div>
+  </div>
+
+  <div class="cols">
+    <div class="panel">
+      <h3>What is already done</h3>
+      <div class="li"><span class="tick">✓</span><span><b>The system is built and running.</b> A student can argue a full case today, from the opening to the judgment.</span></div>
+      <div class="li"><span class="tick">✓</span><span><b>The law it quotes has been checked by hand</b> — every section read against the official published text.</span></div>
+      <div class="li"><span class="tick">✓</span><span><b>It has been tested end to end</b>, and the court answers out loud in about eight seconds.</span></div>
+    </div>
+    <div class="panel">
+      <h3>What the funding pays for</h3>
+      <div class="li"><span class="tick">›</span><span><b>A place online.</b> Rented space on the internet so students can reach it from any laptop or phone.</span></div>
+      <div class="li"><span class="tick">›</span><span><b>Running credit.</b> The system pays a small amount each time it listens, thinks or speaks.</span></div>
+      <div class="money">
+        <div class="m"><div class="n">$0.30</div><div class="c">one full practice hearing</div></div>
+        <div class="m"><div class="n">$30</div><div class="c">a class of 100 students, one hearing each</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="future">
+    <h3>Future scope</h3>
+    <div class="fcards">
+      <div class="fcard">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4f2886" stroke-width="1.7" stroke-linecap="round">
+          <path d="M2 9h20v7a2 2 0 0 1-2 2h-4l-2-3h-4l-2 3H4a2 2 0 0 1-2-2z"/><path d="M4 9V7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v2"/></svg></div>
+        <div><div class="t">AR / VR courtroom</div>
+          <div class="d">Put on a headset and stand in the room — turn to the bench, face the witness.</div></div>
+      </div>
+      <div class="fcard">
+        <div class="ic"><svg width="26" height="22" viewBox="0 0 34 24"><text x="17" y="17" text-anchor="middle" font-family="Newsreader,serif" font-size="15" fill="#4f2886">اردو</text></svg></div>
+        <div><div class="t">Urdu hearing voice pack</div>
+          <div class="d">Argue in Urdu and be answered in Urdu — the way a district court actually runs.</div></div>
+      </div>
+      <div class="fcard">
+        <div class="ic"><svg width="24" height="22" viewBox="0 0 24 24" fill="none" stroke="#4f2886" stroke-width="1.7" stroke-linecap="round">
+          <circle cx="8" cy="8" r="3.2"/><circle cx="17" cy="8" r="3.2"/><path d="M2.5 19c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"/><path d="M13.5 19c0-3.3 1.6-5.5 3.5-5.5s4.5 2.2 4.5 5.5"/></svg></div>
+        <div><div class="t">Two students vs the Bench</div>
+          <div class="d">Two students argue against each other in one hearing, with the AI bench presiding.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footline">
+    <span>No equipment to buy · no per-student licence</span>
+    <span>CourtSimulator · 2026</span>
+  </div>
+</section>
+</body>
+</html>

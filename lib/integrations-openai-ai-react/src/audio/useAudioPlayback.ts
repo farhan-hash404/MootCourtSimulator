@@ -53,12 +53,20 @@ export function useAudioPlayback(workletPath: string) {
   const seqBufferRef = useRef(new SequenceBuffer());
 
   const init = useCallback(async () => {
-    if (readyRef.current) return;
+    if (readyRef.current && ctxRef.current) {
+      if (ctxRef.current.state === "suspended") {
+        await ctxRef.current.resume().catch(() => {});
+      }
+      return;
+    }
     if (!workletPath) {
       throw new Error("workletPath is required for audio playback");
     }
 
     const ctx = new AudioContext({ sampleRate: 24000 });
+    if (ctx.state === "suspended") {
+      await ctx.resume().catch(() => {});
+    }
     await ctx.audioWorklet.addModule(workletPath);
     const worklet = new AudioWorkletNode(ctx, "audio-playback-processor");
     worklet.connect(ctx.destination);
@@ -75,19 +83,29 @@ export function useAudioPlayback(workletPath: string) {
   /** Push audio directly (no sequencing) - for simple streaming */
   const pushAudio = useCallback((base64Audio: string) => {
     if (!workletRef.current) return;
+    if (ctxRef.current?.state === "suspended") {
+      void ctxRef.current.resume().catch(() => {});
+    }
     const samples = decodePCM16ToFloat32(base64Audio);
-    workletRef.current.port.postMessage({ type: "audio", samples });
-    setState("playing");
+    if (samples.length > 0) {
+      workletRef.current.port.postMessage({ type: "audio", samples });
+      setState("playing");
+    }
   }, []);
 
   /** Push audio with sequence number - reorders before playback */
   const pushSequencedAudio = useCallback((seq: number, base64Audio: string) => {
     if (!workletRef.current) return;
+    if (ctxRef.current?.state === "suspended") {
+      void ctxRef.current.resume().catch(() => {});
+    }
 
     const readyChunks = seqBufferRef.current.push(seq, base64Audio);
     for (const chunk of readyChunks) {
       const samples = decodePCM16ToFloat32(chunk);
-      workletRef.current.port.postMessage({ type: "audio", samples });
+      if (samples.length > 0) {
+        workletRef.current.port.postMessage({ type: "audio", samples });
+      }
     }
     if (readyChunks.length > 0) {
       setState("playing");

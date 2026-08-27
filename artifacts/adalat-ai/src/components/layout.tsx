@@ -16,7 +16,10 @@ import { cn } from "@/lib/utils";
  * signals "you are here" one way instead of four.
  */
 const NAV = [
-  { href: "/", label: "Case library" },
+  // "/" is the public landing page; the library moved to /cases when it got
+  // one. The name in the masthead still points at "/", which is the one place
+  // in the app that deliberately leaves it.
+  { href: "/cases", label: "Case library" },
   { href: "/dashboard", label: "Chambers" },
   // Not "cause list": that is the case library, which lists matters still to
   // be called. This page is the record of ones already heard, which is the
@@ -29,7 +32,9 @@ function isCurrent(location: string, href: string): boolean {
   return location === href || (href !== "/" && location.startsWith(href));
 }
 
-function ThemeToggle() {
+/** Exported for the landing page, which sits outside this Layout but still
+ *  needs the one control that changes what the whole record looks like. */
+export function ThemeToggle() {
   const [dark, setDark] = useState(
     () => localStorage.getItem("adalat-theme") === "dark",
   );

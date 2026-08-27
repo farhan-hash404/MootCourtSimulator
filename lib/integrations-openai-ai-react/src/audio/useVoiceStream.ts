@@ -399,12 +399,20 @@ export function useVoiceStream({ workletPath, ...callbacks }: StreamCallbacks) {
             // Ignore cleanup errors.
           }
 
-          reader.releaseLock();
+          try {
+            reader.releaseLock();
+          } catch {
+            // Ignore release lock errors.
+          }
         }
       } catch (error) {
         const err = toError(error);
 
-        if (err.name === "AbortError") {
+        if (
+          err.name === "AbortError" ||
+          err.message?.toLowerCase().includes("abort") ||
+          abortController.signal.aborted
+        ) {
           return;
         }
 
