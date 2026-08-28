@@ -47,7 +47,7 @@ import {
   TurnSpeaker,
 } from "@workspace/api-client-react";
 import type { CourtReasoningStep } from "@workspace/api-client-react";
-import { ChevronRight, Loader2, Mic } from "lucide-react";
+import { ChevronRight, Keyboard, Loader2, Mic, Send } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ApiErrorState, getErrorMessage } from "@/components/api-state";
 import { CaseBriefArgument } from "@/components/case-brief";
@@ -443,24 +443,11 @@ export default function SessionPage({ id }: { id: string }) {
           />
         )}
 
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button size="sm">
-              <Mic className="h-4 w-4" />
-              <span>Rostrum</span>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent side="top" align="center" className="w-80">
-            <p className="rule-heading mb-3">
-              <span>The rostrum</span>
-            </p>
-            <VoiceControl
-              sessionId={sessionId}
-              onTurnComplete={handleTurnComplete}
-              onActivity={handleActivity}
-            />
-          </PopoverContent>
-        </Popover>
+        <RostrumPopover
+          sessionId={sessionId}
+          onTurnComplete={handleTurnComplete}
+          onActivity={handleActivity}
+        />
 
         <Button variant="ghost" size="sm" onClick={() => setTranscriptOpen(true)}>
           Transcript
@@ -1087,5 +1074,163 @@ function ObjectionDialog({ sessionId }: { sessionId: number }) {
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function RostrumPopover({
+  sessionId,
+  onTurnComplete,
+  onActivity,
+}: {
+  sessionId: number;
+  onTurnComplete: () => void;
+  onActivity: (activity: SceneActivity) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<"voice" | "text">("voice");
+  const [utterance, setUtterance] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const handleSubmitText = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const text = utterance.trim();
+    if (!text || submitting) return;
+
+    setSubmitting(true);
+    onActivity({ actor: "you", mode: "speaking" });
+
+    try {
+      const res = await fetch(`/api/sessions/${sessionId}/turn`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ utterance: text }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Server error ${res.status}`);
+      }
+
+      const data = await res.json();
+      setUtterance("");
+      onTurnComplete();
+      queryClient.invalidateQueries({ queryKey: getGetSessionQueryKey(sessionId) });
+
+      if (data.primarySpeaker === "judge") {
+        onActivity({ actor: "judge", mode: "speaking" });
+      } else if (data.primarySpeaker === "opposing_counsel") {
+        onActivity({ actor: "opposing", mode: "speaking" });
+      } else if (data.primarySpeaker === "witness") {
+        onActivity({ actor: "witness", mode: "speaking" });
+      }
+
+      toast({
+        title: "Submission entered on record",
+        description: data.primarySpeaker
+          ? `The ${data.primarySpeaker.replace("_", " ")} has responded.`
+          : "The bench has noted your submission.",
+      });
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "Submission failed",
+        description: err instanceof Error ? err.message : "Turn failed",
+      });
+      onActivity({ actor: null, mode: "idle" });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button size="sm" className="gap-1.5">
+          <Mic className="h-4 w-4" />
+          <span>Rostrum</span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent side="top" align="center" className="w-80 sm:w-96 p-4">
+        <div className="flex items-center justify-between border-b border-rule pb-2 mb-3">
+          <p className="apparatus text-foreground font-medium">The Rostrum</p>
+          <div className="flex items-center gap-1 bg-secondary/50 p-0.5 rounded-sm">
+            <button
+              type="button"
+              onClick={() => setMode("voice")}
+              className={cn(
+                "apparatus px-2 py-1 rounded-sm text-xs transition-colors flex items-center gap-1",
+                mode === "voice"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <Mic className="h-3 w-3" />
+              <span>Voice</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("text")}
+              className={cn(
+                "apparatus px-2 py-1 rounded-sm text-xs transition-colors flex items-center gap-1",
+                mode === "text"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <Keyboard className="h-3 w-3" />
+              <span>Written</span>
+            </button>
+          </div>
+        </div>
+
+        {mode === "voice" ? (
+          <VoiceControl
+            sessionId={sessionId}
+            onTurnComplete={onTurnComplete}
+            onActivity={onActivity}
+          />
+        ) : (
+          <form onSubmit={handleSubmitText} className="space-y-3">
+            <div className="space-y-1.5">
+              <label htmlFor="written-arg" className="apparatus text-xs text-muted-foreground">
+                Written Submission to Court
+              </label>
+              <Textarea
+                id="written-arg"
+                value={utterance}
+                onChange={(e) => setUtterance(e.target.value)}
+                placeholder="My Lord, under section 302 of the PPC, the prosecution submits..."
+                className="min-h-[100px] resize-none text-sm font-serif leading-relaxed"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                    void handleSubmitText(e);
+                  }
+                }}
+              />
+            </div>
+            <div className="flex items-center justify-between gap-2 pt-1">
+              <span className="apparatus text-[10px] text-muted-foreground">
+                Ctrl+Enter to submit
+              </span>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={!utterance.trim() || submitting}
+                className="gap-1.5"
+              >
+                {submitting ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Send className="h-3.5 w-3.5" />
+                )}
+                <span>{submitting ? "Submitting…" : "Submit to Bench"}</span>
+              </Button>
+            </div>
+          </form>
+        )}
+      </PopoverContent>
+    </Popover>
   );
 }

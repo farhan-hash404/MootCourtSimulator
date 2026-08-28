@@ -56,8 +56,14 @@ function AuthGate({ children }: { children: ReactNode }) {
 function Router() {
   return (
     <Switch>
+      <Route path="/">
+        <Layout><CasesPage /></Layout>
+      </Route>
       <Route path="/cases">
         <Layout><CasesPage /></Layout>
+      </Route>
+      <Route path="/chamber">
+        <LandingPage />
       </Route>
       <Route path="/dashboard">
         <Layout><DashboardPage /></Layout>
@@ -86,22 +92,11 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-          {/* The landing page is deliberately outside AuthGate. Everything
-              else in the record is scoped to a signed-in student, but a public
-              face that redirects a visitor to a sign-in form is not a public
-              face. The gate still stands in front of every other route. */}
-          <Switch>
-            <Route path="/">
-              <LandingPage />
-            </Route>
-            <Route>
-              <AuthGate>
-                <Router />
-              </AuthGate>
-            </Route>
-          </Switch>
+          <AuthGate>
+            <Router />
+          </AuthGate>
+          <Toaster />
         </WouterRouter>
-        <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
   );

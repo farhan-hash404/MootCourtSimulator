@@ -16,19 +16,16 @@ import { cn } from "@/lib/utils";
  * signals "you are here" one way instead of four.
  */
 const NAV = [
-  // "/" is the public landing page; the library moved to /cases when it got
-  // one. The name in the masthead still points at "/", which is the one place
-  // in the app that deliberately leaves it.
   { href: "/cases", label: "Case library" },
   { href: "/dashboard", label: "Chambers" },
-  // Not "cause list": that is the case library, which lists matters still to
-  // be called. This page is the record of ones already heard, which is the
-  // opposite direction in time and was reading as a duplicate of the library.
   { href: "/history", label: "Appearances" },
   { href: "/evidence", label: "Statutes" },
 ];
 
 function isCurrent(location: string, href: string): boolean {
+  if (href === "/cases") {
+    return location === "/" || location === "/cases";
+  }
   return location === href || (href !== "/" && location.startsWith(href));
 }
 
