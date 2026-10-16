@@ -23,6 +23,7 @@ const apiKey = process.env.OPENAI_API_KEY || "dummy-key-set-your-openai-api-key-
 
 export const openai = new OpenAI({
   apiKey,
+  baseURL: process.env.OPENAI_BASE_URL || undefined,
 });
 
 

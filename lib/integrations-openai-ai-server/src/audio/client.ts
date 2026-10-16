@@ -27,6 +27,9 @@ const apiKey = process.env.OPENAI_API_KEY || "dummy-key-set-your-openai-api-key-
 
 export const openai = new OpenAI({
   apiKey,
+  // OPENAI_BASE_URL repoints at an OpenAI-compatible endpoint. Note: Gemini's
+  // compat layer has no Whisper/audio parity, so the voice path stays OpenAI-only.
+  baseURL: process.env.OPENAI_BASE_URL || undefined,
 });
 
 

@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CourtSimulator — Recorded Demo</title>
+<meta name="description" content="A recorded walkthrough of CourtSimulator: real AI courtroom outputs replayed with the backend off.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Courier+Prime:wght@400;700&display=swap">
+<style>
+  :root{
+    --ground:hsl(80 12% 94%);--paper:hsl(75 30% 99%);--ink:hsl(216 28% 12%);
+    --ink-soft:hsl(216 14% 38%);--ink-faint:hsl(216 12% 52%);--rule:hsl(80 10% 80%);
+    --rule-soft:hsl(80 10% 87%);--violet:hsl(265 54% 34%);--stamp:hsl(8 76% 44%);
+    --stamp-wash:hsl(8 60% 95%);--seal:hsl(156 50% 28%);--seal-wash:hsl(156 35% 93%);
+    --gold:hsl(40 85% 38%);
+    --wood-1:hsl(32 40% 47%);--wood-2:hsl(28 38% 34%);--wood-3:hsl(26 42% 23%);
+    --wood-4:hsl(24 44% 15%);--stage-air:hsl(30 24% 27%);--spot:hsl(45 72% 86%);
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:hsl(220 28% 8%);--paper:hsl(220 24% 12%);--ink:hsl(75 20% 94%);
+    --ink-soft:hsl(220 14% 64%);--ink-faint:hsl(220 12% 50%);--rule:hsl(220 18% 22%);
+    --rule-soft:hsl(220 16% 18%);--violet:hsl(265 65% 74%);--stamp:hsl(8 72% 62%);
+    --stamp-wash:hsl(8 45% 16%);--seal:hsl(156 52% 56%);--seal-wash:hsl(156 35% 15%);
+    --gold:hsl(40 85% 60%);
+    --wood-1:hsl(30 34% 35%);--wood-2:hsl(27 38% 24%);--wood-3:hsl(25 42% 15%);
+    --wood-4:hsl(22 46% 9%);--stage-air:hsl(25 32% 12%);--spot:hsl(45 74% 80%);
+  }}
+  :root[data-theme="dark"]{
+    --ground:hsl(220 28% 8%);--paper:hsl(220 24% 12%);--ink:hsl(75 20% 94%);
+    --ink-soft:hsl(220 14% 64%);--ink-faint:hsl(220 12% 50%);--rule:hsl(220 18% 22%);
+    --rule-soft:hsl(220 16% 18%);--violet:hsl(265 65% 74%);--stamp:hsl(8 72% 62%);
+    --stamp-wash:hsl(8 45% 16%);--seal:hsl(156 52% 56%);--seal-wash:hsl(156 35% 15%);
+    --gold:hsl(40 85% 60%);
+    --wood-1:hsl(30 34% 35%);--wood-2:hsl(27 38% 24%);--wood-3:hsl(25 42% 15%);
+    --wood-4:hsl(22 46% 9%);--stage-air:hsl(25 32% 12%);--spot:hsl(45 74% 80%);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:'Newsreader',Georgia,serif;
+    font-size:1.0625rem;line-height:1.6;-webkit-font-smoothing:antialiased;font-synthesis-weight:none}
+  .app{font-family:'Courier Prime',monospace;text-transform:uppercase;font-size:.6875rem;letter-spacing:.1em;color:var(--ink-soft)}
+  a{color:var(--violet)}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1rem,.5rem+2vw,2rem) 4rem}
+
+  /* banner */
+  .banner{background:var(--stamp-wash);border-bottom:1px solid var(--stamp);
+    color:var(--ink);text-align:center;padding:.55rem 1rem}
+  .banner .app{color:var(--stamp)}
+  .banner b{font-family:'Archivo',sans-serif;font-weight:600;font-size:.72rem;letter-spacing:.06em}
+
+  /* masthead */
+  header.mast{border-bottom:3px double var(--rule);padding:1.5rem 0 1.1rem;margin-bottom:1.2rem}
+  header.mast .docket{display:flex;flex-wrap:wrap;gap:.3rem .9rem;margin-bottom:.5rem}
+  h1{font-family:'Newsreader',serif;font-weight:400;font-size:clamp(1.8rem,1.3rem+2vw,2.9rem);
+    line-height:1;letter-spacing:-.02em;margin:.1rem 0 0;text-wrap:balance}
+  h1 .v{font-style:italic;color:var(--ink-soft)}
+  .laws{margin:.6rem 0 0;font-family:'Courier Prime',monospace;font-size:.72rem;color:var(--ink-faint);line-height:1.5}
+
+  /* phase strip */
+  .phases{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;border-top:1px solid var(--rule-soft);
+    margin-top:.9rem;padding-top:.7rem;list-style:none;padding-left:0}
+  .phases li{font-family:'Courier Prime',monospace;text-transform:uppercase;font-size:.66rem;
+    letter-spacing:.09em;color:var(--ink-faint);border-bottom:2px solid transparent;padding-bottom:.2rem;display:flex;gap:.4rem}
+  .phases li.cur{color:var(--ink);border-color:var(--ink)}
+  .phases li.past{color:var(--ink-soft)}
+  .phases li .n{font-variant-numeric:tabular-nums}
+
+  /* layout */
+  .grid{display:grid;grid-template-columns:1fr;gap:1.6rem}
+  @media(min-width:900px){.grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:2rem;align-items:start}}
+
+  /* stage */
+  .stage-col{position:relative}
+  @media(min-width:900px){.stage-col{position:sticky;top:1rem}}
+  .stage{border:1px solid var(--rule);border-radius:7px;overflow:hidden;background:var(--wood-4);
+    box-shadow:inset 0 0 6rem -1.5rem hsl(24 44% 6% / .9)}
+  .stage svg{display:block;width:100%;height:auto}
+  .floor-label{margin:.7rem 0 0;display:flex;align-items:center;gap:.6rem;min-height:1.4rem}
+  .floor-label .dot{width:.55rem;height:.55rem;border-radius:50%;background:var(--gold)}
+  .floor-label .t{font-family:'Courier Prime',monospace;text-transform:uppercase;font-size:.7rem;letter-spacing:.09em;color:var(--ink-soft)}
+
+  /* controls */
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-top:1rem;
+    border:1px solid var(--rule);border-radius:999px;padding:.5rem .7rem;background:var(--paper)}
+  button{font-family:'Archivo',sans-serif;font-weight:600;font-size:.82rem;cursor:pointer;
+    border:1px solid var(--rule);background:transparent;color:var(--ink);border-radius:999px;padding:.4rem .9rem;transition:background .15s}
+  button:hover{background:hsl(0 0% 50% / .09)}
+  button.primary{background:var(--violet);color:#fff;border-color:var(--violet)}
+  button:disabled{opacity:.4;cursor:default}
+  .counter{margin-left:auto;font-family:'Courier Prime',monospace;font-size:.72rem;color:var(--ink-faint);font-variant-numeric:tabular-nums}
+
+  /* transcript */
+  .record h2{font-family:'Courier Prime',monospace;text-transform:uppercase;font-size:.6875rem;letter-spacing:.09em;
+    color:var(--ink-soft);border-bottom:1px solid var(--rule);padding-bottom:.4rem;margin:0 0 .3rem;
+    display:flex;justify-content:space-between}
+  .entry{border-left:2px solid transparent;padding:.75rem 0 .75rem .9rem;transition:background .2s}
+  .entry+.entry{border-top:1px solid var(--rule-soft)}
+  .entry.judge{border-color:color-mix(in srgb,var(--violet) 50%,transparent)}
+  .entry.you{border-color:hsl(0 0% 50% / .4)}
+  .entry.opposing{border-color:color-mix(in srgb,var(--violet) 40%,transparent)}
+  .entry.witness{border-color:color-mix(in srgb,var(--seal) 55%,transparent);background:color-mix(in srgb,var(--seal-wash) 40%,transparent)}
+  .entry.objection{border-color:var(--stamp);background:color-mix(in srgb,var(--stamp-wash) 60%,transparent)}
+  .entry.ruling{border-color:var(--violet);background:color-mix(in srgb,var(--violet) 7%,transparent)}
+  .entry .who{font-family:'Courier Prime',monospace;text-transform:uppercase;font-size:.66rem;letter-spacing:.08em;margin-bottom:.3rem}
+  .entry.judge .who,.entry.ruling .who{color:var(--violet)}
+  .entry.witness .who{color:var(--seal)}
+  .entry.objection .who{color:var(--stamp)}
+  .entry .txt{font-size:1.0625rem}
+  .stamp-mark{display:inline-block;font-family:'Courier Prime',monospace;font-weight:700;font-size:.7rem;
+    text-transform:uppercase;letter-spacing:.06em;border:1px solid;border-radius:3px;padding:.05rem .4rem;margin-bottom:.35rem}
+  .stamp-mark.sus{color:var(--seal);border-color:var(--seal);background:var(--seal-wash)}
+  .stamp-mark.ovr{color:var(--stamp);border-color:var(--stamp);background:var(--stamp-wash)}
+  .badge{font-family:'Courier Prime',monospace;text-transform:uppercase;font-size:.62rem;letter-spacing:.06em;padding:.05rem .4rem;border-radius:2px;white-space:nowrap}
+  .badge.v{color:var(--seal);border:1px solid var(--seal)}
+  .badge.u{color:var(--stamp);border:1px solid var(--stamp)}
+
+  .empty{padding:2rem 1rem;text-align:center;color:var(--ink-soft);font-style:italic}
+
+  /* verdict */
+  .verdict{margin-top:1.4rem;border:1px solid var(--rule);border-radius:7px;background:var(--paper);padding:1.2rem 1.25rem;display:none}
+  .verdict.show{display:block}
+  .verdict .top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.6rem;border-bottom:1px solid var(--rule);padding-bottom:.7rem}
+  .verdict .score{font-family:'Newsreader',serif;font-size:2.4rem;line-height:1;font-variant-numeric:tabular-nums}
+  .bars{display:grid;grid-template-columns:1fr;gap:.55rem;margin:.9rem 0}
+  @media(min-width:560px){.bars{grid-template-columns:1fr 1fr;gap:.55rem 1.4rem}}
+  .bar .lab{display:flex;justify-content:space-between;font-family:'Courier Prime',monospace;font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);margin-bottom:.2rem}
+  .bar .track{height:6px;border-radius:3px;background:var(--rule-soft);overflow:hidden}
+  .bar .fill{height:100%;background:var(--violet)}
+  .verdict h3{font-family:'Courier Prime',monospace;text-transform:uppercase;font-size:.66rem;letter-spacing:.09em;color:var(--ink-soft);margin:1rem 0 .3rem}
+  .verdict p{margin:.2rem 0;font-size:1rem}
+  .audit{margin-top:.3rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+  .audit .cite{font-family:'Courier Prime',monospace;font-size:.72rem}
+
+  footer{margin-top:2.5rem;border-top:3px double var(--rule);padding-top:1rem;display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;justify-content:space-between}
+  .theme-btn{position:fixed;top:.5rem;right:.6rem;z-index:5;border-radius:999px;padding:.3rem .7rem;background:var(--paper)}
+  :focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+</style>
+</head>
+<body>
+  <div class="banner"><span class="app">Recorded demo</span> &nbsp;<b>REAL AI OUTPUTS · REPLAYED WITH THE BACKEND OFF · NO LIVE MODEL CALLS</b></div>
+  <button class="theme-btn app" id="themeBtn" type="button">Dark</button>
+
+  <div class="wrap">
+    <header class="mast">
+      <div class="docket app" id="docket"></div>
+      <h1 id="title">Loading…</h1>
+      <div class="laws" id="laws"></div>
+      <ol class="phases" id="phases"></ol>
+    </header>
+
+    <div class="grid">
+      <div class="stage-col">
+        <div class="stage" id="stage"></div>
+        <div class="floor-label"><span class="dot" id="floorDot" style="opacity:0"></span><span class="t" id="floorLabel"></span></div>
+        <div class="controls">
+          <button type="button" id="restart">⟲ Restart</button>
+          <button type="button" id="prev">‹ Prev</button>
+          <button type="button" class="primary" id="play">▶ Play</button>
+          <button type="button" id="next">Next ›</button>
+          <span class="counter" id="counter"></span>
+        </div>
+      </div>
+
+      <div>
+        <section class="record">
+          <h2><span>Record of proceedings</span><span id="recCount"></span></h2>
+          <div id="record"><div class="empty">Press <b>Play</b> to convene the court.</div></div>
+        </section>
+
+        <section class="verdict" id="verdict"></section>
+      </div>
+    </div>
+
+    <footer>
+      <span class="app" id="provenance"></span>
+      <span class="app">CourtSimulator · Pakistan superior judiciary</span>
+    </footer>
+  </div>
+
+<script>
+const PHASES=[["opening","Opening"],["witness_examination","Examination-in-chief"],["cross_examination","Cross-examination"],["closing","Closing"],["verdict","Judgment"]];
+const $=s=>document.querySelector(s);
+let data=null, step=0, playing=false, timer=null;
+
+// ---- theme toggle ----
+$("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=r.getAttribute("data-theme")==="dark"
+  || (r.getAttribute("data-theme")!=="light" && matchMedia("(prefers-color-scheme:dark)").matches);
+  r.setAttribute("data-theme",dark?"light":"dark");$("#themeBtn").textContent=dark?"Dark":"Light";};
+
+function actorOf(t){
+  const tx=(t.transcript||"");
+  if(/^\[OBJECTION:/.test(tx))return"opposing";
+  if(/^\[RULING:/.test(tx))return"judge";
+  if(t.speaker==="student")return"you";
+  if(t.speaker==="judge")return"judge";
+  if(t.speaker==="opposing_counsel")return"opposing";
+  return"witness";
+}
+function parseTurn(t){
+  const tx=t.transcript||"";
+  let m=tx.match(/^\[OBJECTION:\s*(.*?)\]\s*(.*)$/s);
+  if(m)return{mark:"objection",who:"Opposing counsel",ground:m[1],text:m[2]||""};
+  m=tx.match(/^\[RULING:\s*(SUSTAINED|OVERRULED)\]\s*(.*)$/s);
+  if(m)return{mark:"ruling",who:"The bench",ruling:m[1],text:m[2]||""};
+  if(t.speaker==="student")return{mark:"you",who:"You — counsel for the petitioner",text:tx};
+  if(t.speaker==="judge")return{mark:"judge",who:"The bench",text:tx};
+  if(t.speaker==="opposing_counsel")return{mark:"opposing",who:"Opposing counsel",text:tx};
+  return{mark:"witness",who:t.witness_name?("Witness — "+t.witness_name):"Witness",text:tx};
+}
+
+// ---- courtroom SVG ----
+function stageSVG(active, witnessOn){
+  const glow=a=>active===a?0.85:0;
+  const fig=(variant)=>{
+    const robe=variant==="witness"?"hsl(215 16% 30%)":"hsl(220 26% 11%)";
+    const accent=variant==="judge"?"hsl(var(--violet))":variant==="you"?"hsl(var(--seal))":variant==="opposing"?"hsl(var(--stamp))":"hsl(var(--ink-soft))";
+    const wig=variant==="judge"?"hsl(40 20% 88%)":"hsl(220 20% 9%)";
+    return `<g>
+      <path d="M -40 92 C -36 44 -20 26 0 26 C 20 26 36 44 40 92 Z" fill="${robe}"/>
+      <path d="M -10 30 L 0 56 L 10 30 Z" fill="hsl(40 30% 92%)"/>
+      <path d="M -4 33 L -1 50 L 0 44 Z" fill="hsl(40 30% 96%)"/><path d="M 4 33 L 1 50 L 0 44 Z" fill="hsl(40 30% 96%)"/>
+      <rect x="-5" y="18" width="10" height="12" rx="4" fill="hsl(30 26% 60%)"/>
+      <ellipse cx="0" cy="8" rx="11.5" ry="12.5" fill="hsl(35 28% 71%)"/>
+      <path d="M -11.5 5 C -10 -8 10 -8 11.5 5 C 7 -1 -7 -1 -11.5 5 Z" fill="${wig}"/>
+    </g>`;
+  };
+  const spot = active ? `<ellipse cx="${A[active].x}" cy="${A[active].y-30}" rx="200" ry="210" fill="url(#sg)"/>` : "";
+  const witnessFig = witnessOn ? `<g transform="translate(${A.witness.x} ${A.witness.y}) scale(.82)">${fig("witness")}</g>`:"";
+  return `<svg viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Courtroom">
+   <defs>
+     <radialGradient id="sg" cx="50%" cy="32%" r="60%"><stop offset="0" stop-color="var(--spot)" stop-opacity=".48"/><stop offset="55%" stop-color="var(--spot)" stop-opacity=".1"/><stop offset="100%" stop-color="var(--spot)" stop-opacity="0"/></radialGradient>
+     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--wood-2)"/><stop offset="1" stop-color="var(--wood-3)"/></linearGradient>
+     <linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="hsl(30 22% 36%)"/><stop offset="1" stop-color="var(--wood-4)"/></linearGradient>
+     <radialGradient id="vg" cx="50%" cy="20%" r="85%"><stop offset="0" stop-color="var(--stage-air)" stop-opacity="0"/><stop offset="100%" stop-color="var(--wood-4)" stop-opacity=".85"/></radialGradient>
+   </defs>
+   <rect width="1000" height="360" fill="var(--wood-2)"/>
+   ${Array.from({length:11},(_,i)=>`<rect x="${i*100}" y="0" width="3" height="360" fill="var(--wood-3)" opacity=".7"/>`).join("")}
+   <polygon points="0,360 1000,360 1000,560 0,560" fill="url(#fg)"/>
+   <g transform="translate(500 78)" stroke="var(--gold)" stroke-width="2" fill="none" opacity=".9">
+     <circle r="40" stroke-opacity=".5"/><line x1="0" y1="-26" x2="0" y2="22"/><line x1="-26" y1="-20" x2="26" y2="-20"/>
+     <circle cx="0" cy="-24" r="2.4" fill="var(--gold)" stroke="none"/>
+     <path d="M -39 -20 A 13 8 0 0 0 -13 -20 Z"/><path d="M 13 -20 A 13 8 0 0 0 39 -20 Z"/>
+     <path d="M -6 22 L 6 22 L 9 29 L -9 29 Z" fill="var(--gold)" stroke="none"/>
+   </g>
+   ${spot}
+   ${witnessFig}
+   <polygon points="245,300 375,300 390,372 230,372" fill="url(#bg)"/>
+   <rect x="258" y="314" width="52" height="11" rx="2" fill="var(--gold)" opacity=".8"/>
+   <text x="310" y="322" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="8.5" fill="hsl(28 40% 12%)">WITNESS</text>
+   <rect x="474" y="196" width="52" height="86" rx="10" fill="var(--wood-4)"/>
+   <g transform="translate(500 250) scale(1.05)">${fig("judge")}</g>
+   <polygon points="382,300 618,300 642,374 358,374" fill="url(#bg)"/>
+   <rect x="440" y="320" width="120" height="14" rx="3" fill="var(--gold)"/>
+   <text x="500" y="330" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="9" fill="hsl(28 40% 12%)">THE BENCH</text>
+   <g transform="translate(150 452) scale(1.1)">${fig("you")}</g>
+   <polygon points="60,500 290,500 306,560 44,560" fill="hsl(28 34% 22%)"/>
+   <rect x="120" y="512" width="86" height="14" rx="3" fill="var(--gold)"/>
+   <text x="163" y="522" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="8" fill="hsl(28 40% 12%)">YOU · PETITIONER</text>
+   <g transform="translate(850 452) scale(1.1)">${fig("opposing")}</g>
+   <polygon points="710,500 940,500 956,560 694,560" fill="hsl(28 34% 22%)"/>
+   <rect x="800" y="512" width="86" height="14" rx="3" fill="var(--gold)"/>
+   <text x="843" y="522" text-anchor="middle" font-family="'Courier Prime',monospace" font-size="8" fill="hsl(28 40% 12%)">RESPONDENT</text>
+   <rect width="1000" height="560" fill="url(#vg)" pointer-events="none"/>
+  </svg>`;
+}
+const A={judge:{x:500,y:250},witness:{x:310,y:270},you:{x:150,y:470},opposing:{x:850,y:470}};
+
+function render(){
+  const turns=data.turns;
+  const shown=turns.slice(0,step);
+  const cur=step>0?turns[step-1]:null;
+  const active=cur?actorOf(cur):null;
+  const witnessOn=shown.some(t=>t.witness_name);
+
+  // stage
+  $("#stage").innerHTML=stageSVG(active,witnessOn);
+  const labels={you:"You have the floor",judge:"The bench is speaking",opposing:"Opposing counsel is speaking",witness:"The witness is testifying"};
+  $("#floorDot").style.opacity=active?1:0;
+  $("#floorLabel").textContent= step===0?"The court is about to convene" : (step>=turns.length? "Hearing concluded — judgment delivered" : (labels[active]||""));
+
+  // phase strip
+  const curPhase=cur?cur.phase:"opening";
+  const ci=PHASES.findIndex(p=>p[0]===curPhase);
+  $("#phases").innerHTML=PHASES.map((p,i)=>`<li class="${i===ci?'cur':(i<ci?'past':'')}"><span class="n">${i+1}</span><span>${p[1]}</span></li>`).join("");
+
+  // transcript
+  $("#recCount").textContent=`${shown.length} ${shown.length===1?'entry':'entries'}`;
+  if(!shown.length){ $("#record").innerHTML=`<div class="empty">Press <b>Play</b> to convene the court.</div>`; }
+  else{
+    $("#record").innerHTML=shown.map(t=>{
+      const p=parseTurn(t);
+      const verified = verifiedForText(p.text);
+      return `<div class="entry ${p.mark}">
+        <div class="who">${p.who}</div>
+        ${p.mark==="objection"?`<div class="app" style="color:var(--stamp);margin-bottom:.3rem">Objection — ${esc(p.ground)}</div>`:""}
+        ${p.ruling?`<span class="stamp-mark ${p.ruling==='SUSTAINED'?'sus':'ovr'}">${p.ruling}</span><br>`:""}
+        <div class="txt">${esc(p.text)}</div>
+        ${verified?`<div style="margin-top:.4rem"><span class="badge ${verified.ok?'v':'u'}">${verified.ok?'✓ Verified':'⚠ Unverified'}</span> <span class="app" style="margin-left:.3rem">${esc(verified.cite)}</span></div>`:""}
+      </div>`;
+    }).join("");
+    const last=$("#record").lastElementChild; if(last&&playing) last.scrollIntoView({behavior:"smooth",block:"nearest"});
+  }
+
+  // verdict
+  const done=step>=turns.length;
+  const vEl=$("#verdict");
+  if(done&&data.verdict){ vEl.classList.add("show"); vEl.innerHTML=verdictHTML(data.verdict); }
+  else vEl.classList.remove("show");
+
+  // controls
+  $("#counter").textContent=`${Math.min(step,turns.length)} / ${turns.length}${done?' · judgment':''}`;
+  $("#prev").disabled=step<=0; $("#next").disabled=step>=turns.length;
+  $("#play").textContent=playing?"❚❚ Pause":(done?"▶ Replay":"▶ Play");
+}
+
+function verifiedForText(text){
+  // match any citation_check whose raw phrase appears in the spoken text
+  const checks=(data.verdict&&data.verdict.citation_checks)||[];
+  for(const c of checks){ if(c.raw && text.includes(c.raw)) return {ok:c.status==="verified",cite:c.citation||c.raw}; }
+  return null;
+}
+function verdictHTML(v){
+  const bar=(lab,val)=>`<div class="bar"><div class="lab"><span>${lab}</span><span>${val}</span></div><div class="track"><div class="fill" style="width:${val}%"></div></div></div>`;
+  const checks=(v.citation_checks||[]).map(c=>`<span class="badge ${c.status==='verified'?'v':'u'}">${c.status==='verified'?'✓ Verified':'⚠ Unverified'}</span> <span class="cite">${esc(c.citation||c.raw)}</span>`).join('<br>');
+  return `<div class="top"><div><div class="app">Judgment · scorecard</div>
+      <div style="font-family:'Newsreader',serif;font-size:1.3rem;margin-top:.2rem">Winning side: <b style="text-transform:capitalize">${esc(v.winning_side)}</b></div></div>
+      <div style="text-align:right"><div class="score">${v.overall_score}<span style="font-size:1rem;color:var(--ink-soft)">/100</span></div><div class="app">Overall</div></div></div>
+    <div class="bars">
+      ${bar("Legal reasoning",v.legal_reasoning_score)}${bar("Persuasiveness",v.persuasiveness_score)}
+      ${bar("Procedure",v.procedure_score)}${bar("Factual command",v.factual_command_score)}
+      ${bar("Citation accuracy",v.citation_accuracy)}
+    </div>
+    <h3>The bench's remarks</h3><p>${esc(v.judge_remarks)}</p>
+    <h3>Strengths</h3><p>${esc(v.strengths)}</p>
+    <h3>Areas for improvement</h3><p>${esc(v.areas_for_improvement)}</p>
+    <h3>Citation audit</h3><div class="audit">${checks||'<span class="app">No citations to audit.</span>'}</div>`;
+}
+function esc(s){return String(s==null?"":s).replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));}
+
+function setStep(n){ step=Math.max(0,Math.min(n,data.turns.length)); render(); }
+function advance(){ if(step>=data.turns.length){stop();return;} setStep(step+1); if(step>=data.turns.length) stop(); }
+function play(){ if(step>=data.turns.length) step=0; playing=true; render(); timer=setInterval(advance,3600); }
+function stop(){ playing=false; if(timer)clearInterval(timer); timer=null; render(); }
+
+$("#play").onclick=()=>playing?stop():play();
+$("#next").onclick=()=>{stop();setStep(step+1);};
+$("#prev").onclick=()=>{stop();setStep(step-1);};
+$("#restart").onclick=()=>{stop();setStep(0);};
+addEventListener("keydown",e=>{if(e.key==="ArrowRight"){stop();setStep(step+1);}if(e.key==="ArrowLeft"){stop();setStep(step-1);}if(e.key===" "){e.preventDefault();playing?stop():play();}});
+
+fetch("./recorded-session.json").then(r=>r.json()).then(j=>{
+  data=j;
+  const c=j.case, s=j.session;
+  $("#docket").innerHTML=`<span>AD-${String(s.id).padStart(4,"0")}</span><span>·</span><span>${esc(c.area_of_law)}</span><span>·</span><span>for the ${esc(s.student_side)}</span>`;
+  $("#title").innerHTML=esc(c.title).replace(/ v\.? /," <span class='v'>v.</span> ");
+  $("#laws").textContent=c.applicable_laws||"";
+  $("#provenance").textContent="Recorded "+(j.provider||"");
+  setStep(0);
+}).catch(e=>{$("#title").textContent="Could not load recorded-session.json";console.error(e);});
+</script>
+</body>
+</html>

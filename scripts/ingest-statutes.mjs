@@ -113,8 +113,10 @@ function contentHash(text) {
   return createHash("sha256").update(text).digest("hex").slice(0, 32);
 }
 
+const EMBED_BASE = (process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/+$/, "");
+
 async function embedBatch(inputs) {
-  const response = await fetch("https://api.openai.com/v1/embeddings", {
+  const response = await fetch(`${EMBED_BASE}/embeddings`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
