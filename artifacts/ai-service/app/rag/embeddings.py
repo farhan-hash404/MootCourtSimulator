@@ -23,7 +23,13 @@ def get_client() -> AsyncOpenAI:
         # Instrumented here because every model call in the service comes
         # through this one accessor. See app.telemetry for why cost accounting
         # is not attached at the individual call sites.
-        _client = instrument(AsyncOpenAI(api_key=get_settings().openai_api_key))
+        settings = get_settings()
+        _client = instrument(
+            AsyncOpenAI(
+                api_key=settings.openai_api_key,
+                base_url=settings.openai_base_url or None,
+            )
+        )
     return _client
 
 

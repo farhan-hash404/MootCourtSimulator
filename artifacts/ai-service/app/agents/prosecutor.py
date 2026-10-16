@@ -162,4 +162,6 @@ async def argue(context: AgentContext) -> str:
         f'The student just argued:\n"{context.utterance}"\n\n'
         "Rebut as opposing counsel."
     )
-    return await text_completion(system, user, max_tokens=300)
+    # 700, not 300: Gemini thinking models spend completion budget on reasoning,
+    # so 300 truncated the rebuttal.
+    return await text_completion(system, user, max_tokens=700)

@@ -245,4 +245,6 @@ async def preside(context: AgentContext) -> str:
         f'Counsel just said:\n"{context.utterance}"\n\n'
         "Respond from the bench."
     )
-    return await text_completion(system, user, max_tokens=300)
+    # 700, not 300: Gemini "thinking" models count reasoning tokens against the
+    # completion budget, and 300 left the bench reply truncated mid-sentence.
+    return await text_completion(system, user, max_tokens=700)

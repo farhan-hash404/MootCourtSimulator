@@ -18,6 +18,10 @@ class Settings(BaseSettings):
 
     database_url: str
     openai_api_key: str
+    # Repoints the OpenAI SDK at an OpenAI-compatible endpoint (Gemini's
+    # /v1beta/openai/). None keeps the default OpenAI base. One switch covers
+    # every call, since they all go through embeddings.get_client().
+    openai_base_url: str | None = None
 
     ai_service_port: int = 8000
 

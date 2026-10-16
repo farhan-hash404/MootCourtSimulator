@@ -1,0 +1,201 @@
+{
+  "capturedAt": "2026-10-16T06:21:06.853895+00:00",
+  "provider": "Google Gemini (gemini-flash-latest + gemini-embedding-001) via its OpenAI-compatible API",
+  "note": "Real agent outputs captured from the live CourtSimulator stack (statute retrieval, multi-agent courtroom, citation audit, verdict scoring), then replayed statically. One bench line truncated by a free-tier rate limit was replaced with the model's clean generation of the same ruling from an equivalent run.",
+  "case": {
+    "id": 2,
+    "title": "Tariq Khan v. Capital Development Authority",
+    "area_of_law": "Civil",
+    "difficulty": "Beginner",
+    "summary": "Petitioner seeks a permanent injunction restraining the CDA from demolishing a commercial property in Sector F-7, Islamabad, alleging valid lease deed and procedural non-compliance.",
+    "applicable_laws": "Constitution 1973 Art. 4 (Right of individuals to be dealt with in accordance with law, etc.), QSO 1984 Art. 75 (Proof of documents by primary evidence), QSO 1984 Art. 76 (Cases in which secondary evidence relating to documents may be given)",
+    "petitioner_name": "Tariq Khan",
+    "petitioner_role": "Petitioner / Property Owner",
+    "respondent_name": "CDA Enforcement Directorate",
+    "respondent_role": "Respondent / Public Authority",
+    "witnesses": [
+      {
+        "name": "Ghulam Nabi",
+        "role": "Revenue Officer (Patwari)",
+        "statement": "The land ownership entry in Khasra Girdawari matches the allotment record from 2012."
+      },
+      {
+        "name": "Zubair Ahmad",
+        "role": "Urban Architect",
+        "statement": "The construction plan was submitted for approval prior to building commencement."
+      }
+    ],
+    "citations": [
+      {
+        "heading": "Right of individuals to be dealt with in accordance with law, etc.",
+        "citation": "Constitution 1973 Art. 4",
+        "verified": true,
+        "statuteCode": "CONST_1973"
+      },
+      {
+        "heading": "Proof of documents by primary evidence",
+        "citation": "QSO 1984 Art. 75",
+        "verified": true,
+        "statuteCode": "QSO_1984"
+      },
+      {
+        "heading": "Cases in which secondary evidence relating to documents may be given",
+        "citation": "QSO 1984 Art. 76",
+        "verified": true,
+        "statuteCode": "QSO_1984"
+      }
+    ],
+    "brief": null,
+    "source": "library",
+    "created_at": "2026-10-15T19:26:45.131743+00:00"
+  },
+  "session": {
+    "id": 3,
+    "user_id": 3,
+    "case_id": 2,
+    "student_side": "petitioner",
+    "phase": "verdict",
+    "status": "completed",
+    "memory_through_turn_id": 9,
+    "created_at": "2026-10-15T19:44:11.990448+00:00",
+    "completed_at": "2026-10-15T19:45:55.311000+00:00"
+  },
+  "turns": [
+    {
+      "id": 7,
+      "session_id": 3,
+      "phase": "opening",
+      "speaker": "judge",
+      "witness_name": null,
+      "transcript": "The matter of Tariq Khan v. Capital Development Authority is called. Counsel for the petitioner, you may proceed with your opening.",
+      "reasoning": null,
+      "created_at": "2026-10-15T19:44:12.301473+00:00"
+    },
+    {
+      "id": 8,
+      "session_id": 3,
+      "phase": "opening",
+      "speaker": "student",
+      "witness_name": null,
+      "transcript": "May it please the court. I appear for the petitioner, Tariq Khan. This petition challenges the Capital Development Authority's move to demolish the petitioner's commercial property in Sector F-7 without lawful notice, contrary to Article 4 of the Constitution. The petitioner holds a valid lease deed and was never afforded a hearing.",
+      "reasoning": null,
+      "created_at": "2026-10-15T19:44:13.739410+00:00"
+    },
+    {
+      "id": 9,
+      "session_id": 3,
+      "phase": "opening",
+      "speaker": "judge",
+      "witness_name": null,
+      "transcript": "The court notes your submission, learned counsel. You claim your client holds a valid lease deed for this property, but have you placed the original document on the record before us today? Before we address Article 4, satisfy this bench on what primary evidence you are relying upon to establish your client's lawful possession.",
+      "reasoning": null,
+      "created_at": "2026-10-15T19:44:18.768545+00:00",
+      "_note": "bench reply recovered from an equivalent completed run (rate-limit truncation)"
+    },
+    {
+      "id": 10,
+      "session_id": 3,
+      "phase": "witness_examination",
+      "speaker": "witness",
+      "witness_name": "Ghulam Nabi",
+      "transcript": "Ghulam Nabi takes the stand. \"The land ownership entry in Khasra Girdawari matches the allotment record from 2012.\"",
+      "reasoning": null,
+      "created_at": "2026-10-15T19:44:35.597947+00:00"
+    },
+    {
+      "id": 11,
+      "session_id": 3,
+      "phase": "witness_examination",
+      "speaker": "student",
+      "witness_name": null,
+      "transcript": "Mr. Ghulam Nabi, please tell the court what you saw on the morning the CDA officials arrived at the property.",
+      "reasoning": null,
+      "created_at": "2026-10-15T19:44:38.207884+00:00"
+    },
+    {
+      "id": 12,
+      "session_id": 3,
+      "phase": "witness_examination",
+      "speaker": "witness",
+      "witness_name": "Ghulam Nabi",
+      "transcript": "I was not there at the property when the CDA officials came, sir. I have no personal knowledge of what happened on that morning. My role was only to examine and verify the revenue entries in the official records.",
+      "reasoning": [
+        {
+          "action": "dont_recall (grounded in: none)",
+          "thought": "My statement only covers the revenue records and I was not present when the CDA officials arrived at the site.",
+          "observation": "outside the witness's recollection"
+        }
+      ],
+      "created_at": "2026-10-15T19:44:47.036990+00:00"
+    },
+    {
+      "id": 13,
+      "session_id": 3,
+      "phase": "witness_examination",
+      "speaker": "student",
+      "witness_name": null,
+      "transcript": "I put it to you that the officials demolished the structure with no notice whatsoever and that you personally saw them tear down the lease board \u2014 that is correct, is it not?",
+      "reasoning": null,
+      "created_at": "2026-10-15T19:44:49.527637+00:00"
+    },
+    {
+      "id": 14,
+      "session_id": 3,
+      "phase": "witness_examination",
+      "speaker": "witness",
+      "witness_name": "Ghulam Nabi",
+      "transcript": "No, sir, that is not correct at all. As I just told the court, I was not present at the site when any of this happened. I did not see anyone tear down a board or demolish anything, because my duty was only with the revenue records.",
+      "reasoning": [
+        {
+          "action": "correct_record (grounded in: prior_testimony)",
+          "thought": "I already testified that I was not present at the property and saw nothing that morning.",
+          "observation": "the question assumed a fact not in evidence"
+        }
+      ],
+      "created_at": "2026-10-15T19:45:03.918578+00:00"
+    },
+    {
+      "id": 15,
+      "session_id": 3,
+      "phase": "cross_examination",
+      "speaker": "student",
+      "witness_name": null,
+      "transcript": "You were standing across a busy road at the time, so you could not actually have seen whether any notice was posted on the gate, could you?",
+      "reasoning": null,
+      "created_at": "2026-10-15T19:45:15.544586+00:00"
+    },
+    {
+      "id": 16,
+      "session_id": 3,
+      "phase": "closing",
+      "speaker": "student",
+      "witness_name": null,
+      "transcript": "In closing, the petitioner has shown a valid lease and an absence of lawful notice. Article 4 guarantees the right to be dealt with in accordance with law, and the CDA acted outside it. The petitioner prays the demolition be restrained.",
+      "reasoning": null,
+      "created_at": "2026-10-15T19:45:28.855196+00:00"
+    }
+  ],
+  "verdict": {
+    "id": 1,
+    "session_id": 3,
+    "winning_side": "respondent",
+    "overall_score": 46,
+    "legal_reasoning_score": 50,
+    "persuasiveness_score": 45,
+    "procedure_score": 55,
+    "factual_command_score": 35,
+    "citation_accuracy": 100,
+    "citation_checks": [
+      {
+        "raw": "Article 4 of the Constitution",
+        "status": "verified",
+        "heading": "Right of individuals to be dealt with in accordance with law, etc.",
+        "citation": "Constitution 1973 Art. 4"
+      }
+    ],
+    "judge_remarks": "Counsel raised a valid constitutional touchstone under Article 4, but the presentation collapsed entirely during witness examination. Rather than eliciting the revenue entries favorable to the petitioner, counsel stubbornly insisted on cross-examining the witness on events at the physical site that the witness had repeatedly disclaimed witnessing. Consequently, the petitioner failed to lay a solid evidentiary foundation for injunctive relief under Article 199.",
+    "strengths": "Counsel maintained respectful courtroom etiquette and correctly cited Article 4 of the Constitution to frame the grievance against arbitrary administrative action. The opening and closing remarks were concise and clearly articulated the core prayer for relief.",
+    "areas_for_improvement": "Pay close attention to what the witness actually says; do not invent factual scenarios, such as claiming the witness stood across a busy road, after he testified he was never at the scene. Furthermore, you must substantiate documentary claims regarding lease agreements using the primary and secondary evidence provisions of the Qanun-e-Shahadat Order.",
+    "created_at": "2026-10-15T19:45:52.250164+00:00"
+  }
+}

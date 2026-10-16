@@ -25,5 +25,7 @@ if (!process.env.OPENAI_API_KEY) {
 
 export const openai = new OpenAI({
   apiKey,
+  // OPENAI_BASE_URL repoints at an OpenAI-compatible endpoint (e.g. Gemini).
+  baseURL: process.env.OPENAI_BASE_URL || undefined,
 });
 
